@@ -1,39 +1,5 @@
 # DrinkWatch – Copilot Instructions
 
-## Build, test, and lint
-
-All commands use `gradlew.bat` on Windows (not `gradlew`).
-
-```powershell
-# Build
-.\gradlew.bat assembleDebug
-
-# Lint
-.\gradlew.bat lint
-# Report: app/build/reports/lint-results-debug.html
-
-# Unit tests (JVM, no device needed)
-.\gradlew.bat testDebugUnitTest
-
-# Run a single unit test class
-.\gradlew.bat testDebugUnitTest --tests "com.example.drinkwatch.ExampleUnitTest"
-
-# Instrumented tests (requires connected device/emulator)
-.\gradlew.bat connectedDebugAndroidTest
-```
-
-Deploy and launch on emulator via the `android` CLI:
-```powershell
-android emulator start Medium_Phone        # start emulator (wait for "success!")
-android run --apks app/build/outputs/apk/debug/app-debug.apk
-```
-
-Inspect the running app:
-```powershell
-android layout --pretty     # UI element tree (preferred for debugging)
-android screen capture -o screen.png   # screenshot fallback (e.g. for WebViews)
-```
-
 ## Architecture
 
 Single-module Jetpack Compose application (`com.example.drinkwatch`).
@@ -44,11 +10,12 @@ Single-module Jetpack Compose application (`com.example.drinkwatch`).
   - `Type.kt` — typography scale
   - `Theme.kt` — `DrinkWatchTheme` composable; supports dynamic color (Android 12+) and dark/light modes
 - **No XML layouts** — UI is 100% Jetpack Compose
-- **No navigation library, ViewModel, or data layer yet** — project is in early scaffolding state
 
 ## Before finishing any request
 
 Always run the following before considering a task done:
+
+Windows:
 
 ```powershell
 .\gradlew.bat assembleDebug lint testDebugUnitTest
