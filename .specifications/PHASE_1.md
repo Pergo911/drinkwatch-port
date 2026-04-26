@@ -40,7 +40,7 @@ project compiles cleanly with all Phase 2–14 dependency infrastructure in plac
 
 ```toml
 ksp = "2.3.7"
-room = "2.7.2"
+room = "2.8.4"
 datastore = "1.2.1"
 kotlinxSerializationJson = "1.11.0"
 navigation3 = "1.1.1"
