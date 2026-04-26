@@ -25,9 +25,21 @@ No features are implemented yet.
 
 ---
 
-### ⬜ Phase 1 — Dependencies & Project Setup
-Add Room (KSP), DataStore, kotlinx.serialization, and Navigation 3 to the version catalog and
-build files; create `DrinkWatchApplication`.
+### ✅ Phase 1 — Dependencies & Project Setup
+
+All required libraries added to the version catalog and build files;
+`DrinkWatchApplication` stub created and registered.
+
+| Added | Version |
+|---|---|
+| KSP plugin | `2.3.7` |
+| Room (runtime, ktx, compiler) | `2.8.4` |
+| DataStore Preferences | `1.2.1` |
+| kotlinx-serialization-json | `1.11.0` |
+| Navigation 3 (runtime, ui) | `1.1.1` |
+| lifecycle-viewmodel-navigation3 | `2.10.0` |
+
+New files: `DrinkWatchApplication.kt`
 
 ### ⬜ Phase 2 — Data Layer: Models & Room Database
 Domain data classes, Room entities, DAOs, and `AppDatabase`.

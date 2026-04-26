@@ -2,6 +2,7 @@ package com.example.drinkwatch.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -33,6 +34,7 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+@SuppressLint("NewApi")  // dynamicDarkColorScheme/dynamicLightColorScheme are guarded by SDK_INT >= S above
 @Composable
 fun DrinkWatchTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
