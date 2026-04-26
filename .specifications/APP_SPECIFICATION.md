@@ -28,7 +28,7 @@ Properties: name, type (shot, long drink, non-alcoholic)
 
 ## Glasses
 
-The glass a drink is served in, has to be "returned" in order for the player who took it to be served again.
+The glass a drink is served in. The player can later "return" this glass. If the user tries ordering for a player who did not return previous glass(es), a confirmation dialog will appear.
 
 Properties: group (A-Z), glass number
 
