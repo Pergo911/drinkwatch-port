@@ -3,17 +3,20 @@ package com.example.drinkwatch.ui.main
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.drinkwatch.DrinkWatchApplication
+import com.example.drinkwatch.viewmodel.MainViewModel
 
 @Composable
 fun MainScreen(
@@ -23,24 +26,31 @@ fun MainScreen(
     onNavigateToPlayerDetail: (Long) -> Unit,
     onNavigateToOrderDialog: (Long) -> Unit,
 ) {
-    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    val app = LocalContext.current.applicationContext as DrinkWatchApplication
+    val viewModel: MainViewModel = viewModel(factory = app.mainViewModelFactory)
+
+    val sessionName by viewModel.sessionName.collectAsStateWithLifecycle()
+    val sessionId   by viewModel.sessionId.collectAsStateWithLifecycle()
+
+    // Key by sessionId so the tab resets to ORDER whenever the session is replaced.
+    var selectedTab by rememberSaveable(sessionId, stateSaver = MainTabSaver) {
+        mutableStateOf(MainTab.ORDER)
+    }
 
     Scaffold(
+        topBar = {
+            MainTopAppBar(
+                sessionName = sessionName,
+                onNavigateToSession = onNavigateToSession,
+                onNavigateToSettings = onNavigateToSettings,
+                onNavigateToAbout = onNavigateToAbout,
+            )
+        },
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    icon = {},
-                    label = { Text("Order") },
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    icon = {},
-                    label = { Text("Glasses") },
-                )
-            }
+            MainBottomNavBar(
+                selectedTab = selectedTab,
+                onTabSelected = { selectedTab = it },
+            )
         },
     ) { innerPadding ->
         Box(
@@ -49,7 +59,12 @@ fun MainScreen(
                 .padding(innerPadding),
             contentAlignment = Alignment.Center,
         ) {
-            Text(if (selectedTab == 0) "Order tab (stub)" else "Glasses tab (stub)")
+            Text(
+                when (selectedTab) {
+                    MainTab.ORDER   -> "Order tab (stub)"
+                    MainTab.GLASSES -> "Glasses tab (stub)"
+                }
+            )
         }
     }
 }

@@ -77,6 +77,17 @@ class MainViewModel(
 
     val queue: StateFlow<List<QueuedOrder>> = _queue.asStateFlow()
 
+    val sessionName: StateFlow<String> =
+        _currentSession
+            .map { it?.name ?: "" }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), "")
+
+    /** Exposed so MainScreen can key rememberSaveable by session identity. */
+    val sessionId: StateFlow<Long?> =
+        _currentSession
+            .map { it?.id }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+
     val playerUiStates: StateFlow<List<PlayerUiState>> =
         _currentSession.flatMapLatest { session ->
             if (session == null) return@flatMapLatest flowOf(emptyList())

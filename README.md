@@ -139,8 +139,20 @@ Overview tab (create / import / export), Players tab, Drinks tab, Glass Groups t
 | `gradle/libs.versions.toml` | Added `material-icons-core` entry (BOM-managed) |
 | `app/build.gradle.kts` | Added `material-icons-core` implementation dependency |
 
-### ⬜ Phase 7 — Main Screen Shell
-`Scaffold` with `AppBar` (hamburger menu) and `BottomNavBar` (Order / Glasses tabs).
+### ✅ Phase 7 — Main Screen Shell
+
+`Scaffold` with `TopAppBar` (session name + hamburger menu → Session / Settings / About) and
+`BottomNavBar` (Order / Glasses tabs with icons). Tab state keyed by session ID so it resets
+automatically on session change.
+
+| New / Modified | Description |
+|---|---|
+| `ui/main/AppBar.kt` | `MainTopAppBar`: session-name title, hamburger `IconButton` with `DropdownMenu` |
+| `ui/main/BottomNavBar.kt` | `MainTab` enum (ORDER/GLASSES) + `MainTabSaver` + `MainBottomNavBar` |
+| `ui/main/MainScreen.kt` | Wires `MainViewModel`, `MainTopAppBar`, `MainBottomNavBar`; tab stubs for Phase 8/10 |
+| `viewmodel/MainViewModel.kt` | Added `sessionName: StateFlow<String>` and `sessionId: StateFlow<Long?>` |
+| `gradle/libs.versions.toml` | Added `material-icons-extended` entry (BOM-managed) |
+| `app/build.gradle.kts` | Added `material-icons-extended` implementation dependency |
 
 ### ⬜ Phase 8 — Order Tab
 `PlayerCard` (normal / timeout / queued / disabled states), `QueueOverlay`, `TimeoutDialog`,
