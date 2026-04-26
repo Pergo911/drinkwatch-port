@@ -148,6 +148,42 @@ class SessionRepository(
     suspend fun isGlassTaken(sessionId: Long, group: Char, number: Int): Boolean =
         eventDao.isGlassTaken(sessionId, group.toString(), number)
 
+    // ── Timeouts & Returns ────────────────────────────────────────────────────
+
+    suspend fun startTimeout(
+        sessionId: Long,
+        playerId: Long,
+        durationSeconds: Int,
+        nowMs: Long = System.currentTimeMillis(),
+    ) {
+        eventDao.insert(
+            EventEntity(
+                sessionId = sessionId,
+                timestampMs = nowMs,
+                type = EventEntity.TYPE_TIMEOUT,
+                playerId = playerId,
+                durationSeconds = durationSeconds,
+            )
+        )
+    }
+
+    suspend fun returnGlass(
+        sessionId: Long,
+        glassGroup: Char,
+        glassNumber: Int,
+        nowMs: Long = System.currentTimeMillis(),
+    ) {
+        eventDao.insert(
+            EventEntity(
+                sessionId = sessionId,
+                timestampMs = nowMs,
+                type = EventEntity.TYPE_RETURN,
+                glassGroup = glassGroup.toString(),
+                glassNumber = glassNumber,
+            )
+        )
+    }
+
     // ── Orders ────────────────────────────────────────────────────────────────
 
     /**

@@ -104,9 +104,21 @@ conditional session guard, `DialogSceneStrategy` for the order dialog, wired int
 
 Updated: `MainActivity.kt` — replaces `Greeting` stub with `AppNavHost()`.
 
-### ⬜ Phase 5 — ViewModels
-`MainViewModel` (with 1-second ticker), `SessionViewModel`, `SettingsViewModel`, and their
-`ViewModelProvider.Factory` implementations.
+### ✅ Phase 5 — ViewModels
+
+`MainViewModel`, `SessionViewModel`, `SettingsViewModel`, and their `ViewModelProvider.Factory`
+implementations. UI state models and missing repository methods also added.
+
+| New / Modified | Description |
+|---|---|
+| `viewmodel/PlayerUiState.kt` | `PlayerDerivedState` + queue overlay + ticker-driven `timeoutMillisRemaining` / `isUnderTimeout` |
+| `viewmodel/TakenGlassUiState.kt` | Taken glass with joined player name, drink name |
+| `viewmodel/MainViewModel.kt` | Queue state, 1-second ticker, `playerUiStates`/`takenGlasses`/`activeDrinkHighlight` flows, all order/timeout/return actions |
+| `viewmodel/SessionViewModel.kt` | Session/player/drink/glassGroup flows, full CRUD, `exportSession`/`importSession` on `Dispatchers.IO` |
+| `viewmodel/SettingsViewModel.kt` | Settings flow + setters |
+| `util/TimeUtils.kt` | `formatCountdown` (MM:SS) and `formatDuration` (Xh Ym) |
+| `data/repository/SessionRepository.kt` | Added `startTimeout(…)` and `returnGlass(…)` |
+| `DrinkWatchApplication.kt` | Wired `mainViewModelFactory`, `sessionViewModelFactory`, `settingsViewModelFactory` |
 
 ### ⬜ Phase 6 — Session Screen
 Overview tab (create / import / export), Players tab, Drinks tab, Glass Groups tab.

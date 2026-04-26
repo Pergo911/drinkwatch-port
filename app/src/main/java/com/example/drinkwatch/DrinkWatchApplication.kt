@@ -7,6 +7,9 @@ import com.example.drinkwatch.data.db.AppDatabase
 import com.example.drinkwatch.data.repository.SessionRepository
 import com.example.drinkwatch.data.repository.SettingsRepository
 import com.example.drinkwatch.data.serialization.SessionSerializer
+import com.example.drinkwatch.viewmodel.MainViewModel
+import com.example.drinkwatch.viewmodel.SessionViewModel
+import com.example.drinkwatch.viewmodel.SettingsViewModel
 
 class DrinkWatchApplication : Application() {
 
@@ -42,6 +45,18 @@ class DrinkWatchApplication : Application() {
             glassGroupDao = database.glassGroupDao(),
             eventDao = database.eventDao(),
         )
+    }
+
+    val mainViewModelFactory: MainViewModel.Factory by lazy {
+        MainViewModel.Factory(sessionRepository, settingsRepository)
+    }
+
+    val sessionViewModelFactory: SessionViewModel.Factory by lazy {
+        SessionViewModel.Factory(sessionRepository, sessionSerializer)
+    }
+
+    val settingsViewModelFactory: SettingsViewModel.Factory by lazy {
+        SettingsViewModel.Factory(settingsRepository)
     }
 }
 
