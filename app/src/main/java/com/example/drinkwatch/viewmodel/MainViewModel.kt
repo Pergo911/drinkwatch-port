@@ -95,14 +95,18 @@ class MainViewModel(
                 sessionRepository.observePlayerStates(session.id),
                 _queue,
                 tickerFlow,
-            ) { derivedList, queue, nowMs ->
+                sessionRepository.observeDrinks(session.id),
+            ) { derivedList, queue, nowMs, drinks ->
+                val drinkById = drinks.associateBy { it.id }
                 derivedList.map { derived ->
                     val millisRemaining = derived.timeoutEndsAtMs
                         ?.let { it - nowMs }?.takeIf { it > 0 }
+                    val queuedOrder = queue.firstOrNull { it.playerId == derived.player.id }
                     PlayerUiState(
                         derived = derived,
-                        queuedOrder = queue.firstOrNull { it.playerId == derived.player.id },
+                        queuedOrder = queuedOrder,
                         timeoutMillisRemaining = millisRemaining,
+                        queuedDrinkName = queuedOrder?.let { drinkById[it.drinkId]?.name },
                     )
                 }
             }
@@ -137,6 +141,11 @@ class MainViewModel(
         settingsRepository.settings
             .map { it.activeDrinkHighlight }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 3)
+
+    val defaultTimeoutSeconds: StateFlow<Int> =
+        settingsRepository.settings
+            .map { it.defaultTimeoutSeconds }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 300)
 
     // ── Actions ───────────────────────────────────────────────────────────────
 

@@ -3,6 +3,8 @@ package com.example.drinkwatch.ui.main
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -21,6 +23,7 @@ val MainTabSaver: Saver<MainTab, Int> = Saver(
 fun MainBottomNavBar(
     selectedTab: MainTab,
     onTabSelected: (MainTab) -> Unit,
+    takenGlassCount: Int,
 ) {
     NavigationBar {
         NavigationBarItem(
@@ -32,7 +35,17 @@ fun MainBottomNavBar(
         NavigationBarItem(
             selected = selectedTab == MainTab.GLASSES,
             onClick = { onTabSelected(MainTab.GLASSES) },
-            icon = { Icon(Icons.Filled.LocalBar, contentDescription = null) },
+            icon = {
+                BadgedBox(
+                    badge = {
+                        if (takenGlassCount > 0) {
+                            Badge { Text(takenGlassCount.toString()) }
+                        }
+                    },
+                ) {
+                    Icon(Icons.Filled.LocalBar, contentDescription = null)
+                }
+            },
             label = { Text("Glasses") },
         )
     }

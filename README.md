@@ -154,9 +154,21 @@ automatically on session change.
 | `gradle/libs.versions.toml` | Added `material-icons-extended` entry (BOM-managed) |
 | `app/build.gradle.kts` | Added `material-icons-extended` implementation dependency |
 
-### ⬜ Phase 8 — Order Tab
+### ✅ Phase 8 — Order Tab
+
 `PlayerCard` (normal / timeout / queued / disabled states), `QueueOverlay`, `TimeoutDialog`,
-queue FAB.
+queue FAB, and glasses badge on the bottom nav.
+
+| New / Modified | Description |
+|---|---|
+| `ui/order/OrderTab.kt` | `LazyColumn` of `PlayerCard`s, queue `ExtendedFloatingActionButton`, queue-blocked snackbar |
+| `ui/order/PlayerCard.kt` | `ElevatedCard` with normal / under-timeout / queued / disabled states |
+| `ui/order/QueueOverlay.kt` | Replaces action-button row when an order is queued; shows drink → glass with `×` cancel |
+| `ui/dialog/TimeoutDialog.kt` | `AlertDialog` duration picker (hours + minutes `OutlinedTextField`s); 0:00 allowed |
+| `viewmodel/PlayerUiState.kt` | Added `queuedDrinkName: String?` field for ViewModel-resolved drink name |
+| `viewmodel/MainViewModel.kt` | Added `defaultTimeoutSeconds: StateFlow<Int>`; updated `playerUiStates` to 4-flow `combine` resolving drink names |
+| `ui/main/MainScreen.kt` | Added `SnackbarHostState`, `uiEvents` collection, replaced Order stub with `OrderTab`, passes badge count to nav bar |
+| `ui/main/BottomNavBar.kt` | Added `takenGlassCount: Int` param; Glasses icon wrapped in `BadgedBox` |
 
 ### ⬜ Phase 9 — Order Full-Screen Dialog
 Two-step drink → glass picker; split Queue / Confirm Now button.

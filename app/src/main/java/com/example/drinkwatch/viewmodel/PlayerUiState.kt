@@ -8,6 +8,8 @@ data class PlayerUiState(
     val queuedOrder: QueuedOrder?,
     /** Milliseconds until the timeout expires; null if not under timeout. Ticker-driven. */
     val timeoutMillisRemaining: Long?,
+    /** Resolved display name of the queued drink; null when no order is queued. */
+    val queuedDrinkName: String?,
 ) {
     /**
      * True while [timeoutMillisRemaining] is non-null and > 0.
