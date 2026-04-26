@@ -41,8 +41,32 @@ All required libraries added to the version catalog and build files;
 
 New files: `DrinkWatchApplication.kt`
 
-### ⬜ Phase 2 — Data Layer: Models & Room Database
-Domain data classes, Room entities, DAOs, and `AppDatabase`.
+### ✅ Phase 2 — Data Layer: Models & Room Database
+
+Domain data classes, Room entities with FK cascade deletes, DAOs, TypeConverters, and
+`AppDatabase`. Room KSP annotation processing verified.
+
+| New files | Description |
+|---|---|
+| `data/model/Session.kt` | Domain model |
+| `data/model/Player.kt` | Domain model |
+| `data/model/Drink.kt` | Domain model + `DrinkType` enum |
+| `data/model/GlassGroup.kt` | Domain model |
+| `data/model/Event.kt` | Sealed class event hierarchy |
+| `data/model/DerivedState.kt` | `PlayerDerivedState`, `TakenGlass` |
+| `data/db/entity/SessionEntity.kt` | Room entity + mapper |
+| `data/db/entity/PlayerEntity.kt` | Room entity + mapper |
+| `data/db/entity/DrinkEntity.kt` | Room entity + mapper |
+| `data/db/entity/GlassGroupEntity.kt` | Room entity + mapper (unique index on `sessionId+letter`) |
+| `data/db/entity/EventEntity.kt` | Flat-table Room entity + mapper + type constants |
+| `data/db/dao/SessionDao.kt` | CRUD + reactive queries |
+| `data/db/dao/PlayerDao.kt` | CRUD + reactive queries |
+| `data/db/dao/DrinkDao.kt` | CRUD + reactive queries |
+| `data/db/dao/GlassGroupDao.kt` | CRUD + reactive queries |
+| `data/db/dao/EventDao.kt` | Insert, session/player queries, `getTakenGlasses`, `isGlassTaken` |
+| `data/db/AppDatabase.kt` | `@Database` with `DrinkType` TypeConverter |
+
+Updated: `DrinkWatchApplication.kt` — lazy `AppDatabase` initialization.
 
 ### ⬜ Phase 3 — Repositories & Business Logic
 `SessionRepository`, `SettingsRepository`, `SessionSerializer`; unit tests for derived-state logic.
