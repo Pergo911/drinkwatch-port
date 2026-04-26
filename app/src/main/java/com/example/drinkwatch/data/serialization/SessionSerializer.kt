@@ -61,7 +61,7 @@ class SessionSerializer(
         )
 
         val bytes = json.encodeToString(snapshot).toByteArray(Charsets.UTF_8)
-        outputStream.write(bytes)
+        outputStream.use { it.write(bytes) }
     }
 
     /**
@@ -70,7 +70,7 @@ class SessionSerializer(
      * ID remapping and `isDisabled` flag restoration are handled by [SessionRepository.importSession].
      */
     suspend fun import(inputStream: InputStream) {
-        val text = inputStream.readBytes().toString(Charsets.UTF_8)
+        val text = inputStream.use { it.readBytes() }.toString(Charsets.UTF_8)
         val snapshot = json.decodeFromString<SessionSnapshot>(text)
         repository.importSession(snapshot)
     }

@@ -120,8 +120,24 @@ implementations. UI state models and missing repository methods also added.
 | `data/repository/SessionRepository.kt` | Added `startTimeout(…)` and `returnGlass(…)` |
 | `DrinkWatchApplication.kt` | Wired `mainViewModelFactory`, `sessionViewModelFactory`, `settingsViewModelFactory` |
 
-### ⬜ Phase 6 — Session Screen
+### ✅ Phase 6 — Session Screen
+
 Overview tab (create / import / export), Players tab, Drinks tab, Glass Groups tab.
+
+| New / Modified | Description |
+|---|---|
+| `ui/session/SessionScreen.kt` | Replaces stub; 4-tab scaffold, ViewModel wiring, snackbar errors, guard auto-nav |
+| `ui/session/overview/OverviewTab.kt` | No-session (Import / Create) and has-session (edit name, Export, Import, Start New) states; SAF launchers; confirmation dialogs |
+| `ui/session/players/PlayersTab.kt` | Scrollable player list with add FAB |
+| `ui/session/players/PlayerDialog.kt` | Full-screen add / edit dialog with Delete confirmation |
+| `ui/session/drinks/DrinksTab.kt` | Scrollable drink list with add FAB |
+| `ui/session/drinks/DrinkDialog.kt` | Full-screen add / edit dialog; DrinkType segmented button; Delete confirmation |
+| `ui/session/glassgroups/GlassGroupsTab.kt` | A–Z `FilterChip` grid backed by `GlassGroup` records |
+| `data/serialization/SessionSerializer.kt` | Streams wrapped in `use {}` so serializer owns stream lifecycle |
+| `ui/navigation/Routes.kt` | `Session` changed from `data object` to `data class Session(val openedAsGuard: Boolean = false)` |
+| `ui/navigation/AppNavHost.kt` | Guard pushes `Session(openedAsGuard = true)`; flag threaded to `SessionScreen` |
+| `gradle/libs.versions.toml` | Added `material-icons-core` entry (BOM-managed) |
+| `app/build.gradle.kts` | Added `material-icons-core` implementation dependency |
 
 ### ⬜ Phase 7 — Main Screen Shell
 `Scaffold` with `AppBar` (hamburger menu) and `BottomNavBar` (Order / Glasses tabs).

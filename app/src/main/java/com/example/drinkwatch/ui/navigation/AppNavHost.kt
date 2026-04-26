@@ -29,7 +29,7 @@ fun AppNavHost() {
     LaunchedEffect(Unit) {
         if (!app.sessionRepository.hasActiveSession()) {
             backStack.clear()
-            backStack.add(Session)
+            backStack.add(Session(openedAsGuard = true))
         }
     }
 
@@ -47,7 +47,7 @@ fun AppNavHost() {
 
             entry<Main> {
                 MainScreen(
-                    onNavigateToSession  = dropUnlessResumed { backStack.add(Session) },
+                    onNavigateToSession  = dropUnlessResumed { backStack.add(Session()) },
                     onNavigateToSettings = dropUnlessResumed { backStack.add(Settings) },
                     onNavigateToAbout    = dropUnlessResumed { backStack.add(About) },
                     onNavigateToPlayerDetail = { id -> backStack.add(PlayerDetail(id)) },
@@ -57,8 +57,9 @@ fun AppNavHost() {
                 )
             }
 
-            entry<Session> {
+            entry<Session> { key ->
                 SessionScreen(
+                    openedAsGuard = key.openedAsGuard,
                     onNavigateToMain = dropUnlessResumed {
                         backStack.clear()
                         backStack.add(Main)

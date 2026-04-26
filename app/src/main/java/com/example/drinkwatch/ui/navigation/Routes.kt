@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable sealed interface AppRoute : NavKey
 
 @Serializable data object Main         : AppRoute
-@Serializable data object Session      : AppRoute
+@Serializable data class  Session(val openedAsGuard: Boolean = false) : AppRoute
 @Serializable data object Settings     : AppRoute
 @Serializable data object About        : AppRoute
 @Serializable data class  PlayerDetail(val playerId: Long) : AppRoute
