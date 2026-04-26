@@ -2,9 +2,9 @@
 
 ## Development roadmap
 
-- The original project specification is at @.specifications\APP_SPECIFICATION.md
-- The detailed development plan is at @.specifications\DEVELOPMENT_PLAN.md, which breaks down the work into 14 phases with specific tasks and milestones for each phase.
-- Each phase is expanded on in detail in their own markdown files at @.specifications\PHASE_1.md, @.specifications\PHASE_2.md, ..., @.specifications\PHASE_14.md
+- The original project specification is at @.specifications/APP_SPECIFICATION.md
+- The detailed development plan is at @.specifications/DEVELOPMENT_PLAN.md, which breaks down the work into 14 phases with specific tasks and milestones for each phase.
+- Each phase is expanded on in detail in their own markdown files at @.specifications/PHASE_1.md, @.specifications/PHASE_2.md, ..., @.specifications/PHASE_14.md
 - The current implementation status is tracked in the project README at @README.md, which is updated as work progresses through the phases.
 
 ## Architecture
