@@ -1,3 +1,138 @@
+# Phase 9 — Order Full-Screen Dialog
+
+## Goal
+
+Replace the `OrderDialogContent` stub in `ui/dialog/OrderDialog.kt` with a fully functional
+two-step drink-then-glass selection dialog. Step 1 lets the bartender pick a drink from a grouped
+scrollable list. Step 2 selects an optional glass and confirms via split **Queue** / **Confirm Now**
+actions.
+
+---
+
+## Context
+
+`OrderDialogContent` is already wired into the navigation back stack in `AppNavHost.kt` (Phase 4)
+as a full-screen `DialogScene` using `DialogProperties(usePlatformDefaultWidth = false)`. It
+receives `playerId: Long` and `onDismiss: () -> Unit`. No navigation-layer changes are needed.
+
+---
+
+## ViewModel Sharing
+
+`MainViewModel` holds the in-memory queue (`_queue: MutableStateFlow`). The Order dialog must share
+the **same** `MainViewModel` instance as `MainScreen` so `addToQueue` / `commitOrderNow` calls
+affect the queue that `MainScreen` observes.
+
+To share a ViewModel across Navigation 3 entries, scope it to the **Activity** (a single
+`ViewModelStore` that outlives any nav entry):
+
+```kotlin
+val activity = LocalContext.current as ComponentActivity
+val mainVm: MainViewModel = viewModel(
+    viewModelStoreOwner = activity,
+    factory = app.mainViewModelFactory,
+)
+```
+
+`SessionViewModel` is purely reactive (Room-backed flows), so a fresh entry-scoped instance per
+dialog open is fine — it will observe the same Room data either way.
+
+---
+
+## Files to Modify
+
+| File | Change |
+|---|---|
+| `viewmodel/MainViewModel.kt` | Fix `commitOrderNow` to also check in-memory queue for glass conflicts |
+| `ui/navigation/AppNavHost.kt` | Guard `onNavigateToOrderDialog` to prevent duplicate dialog entries |
+| `ui/main/MainScreen.kt` | Scope `MainViewModel` to the Activity |
+| `ui/dialog/OrderDialog.kt` | Full replacement of stub with two-step implementation |
+
+---
+
+## Task 1 — Fix `viewmodel/MainViewModel.kt`
+
+`commitOrderNow` currently only checks the DB for glass conflicts; it misses cases where a
+**different player** already has the same glass in the in-memory queue.  Align it with
+`addToQueue`, which already checks both:
+
+```kotlin
+fun commitOrderNow(playerId: Long, drinkId: Long, glassGroup: Char?, glassNumber: Int?) {
+    viewModelScope.launch {
+        val sessionId = _currentSession.value?.id ?: return@launch
+        if (glassGroup != null && glassNumber != null) {
+            val takenInDb    = sessionRepository.isGlassTaken(sessionId, glassGroup, glassNumber)
+            val takenInQueue = _queue.value.any {
+                it.glassGroup == glassGroup && it.glassNumber == glassNumber
+                    && it.playerId != playerId
+            }
+            if (takenInDb || takenInQueue) {
+                _uiEvents.tryEmit(UiEvent.GlassAlreadyTaken)
+                return@launch
+            }
+        }
+        sessionRepository.commitOrders(
+            sessionId,
+            listOf(QueuedOrder(playerId, drinkId, glassGroup, glassNumber)),
+        )
+    }
+}
+```
+
+---
+
+## Task 2 — Guard `ui/navigation/AppNavHost.kt`
+
+The `AppNavHost.kt` comment (line 55) already notes that `(Long) -> Unit` callbacks must be
+guarded at the call site.  Phase 9 is that call site.  Add a guard so that a second
+`OrderDialog` cannot be pushed while one is already on the back stack:
+
+```kotlin
+// Replace:
+onNavigateToOrderDialog  = { id -> backStack.add(OrderDialog(id)) },
+
+// With:
+onNavigateToOrderDialog = { id ->
+    if (backStack.none { it is OrderDialog }) {
+        backStack.add(OrderDialog(id))
+    }
+},
+```
+
+---
+
+## Task 3 — Update `ui/main/MainScreen.kt`
+
+Change how `MainViewModel` is obtained so the Activity-scoped instance is shared with the dialog.
+
+```kotlin
+// Add import
+import androidx.activity.ComponentActivity
+
+// Replace:
+val viewModel: MainViewModel = viewModel(factory = app.mainViewModelFactory)
+
+// With:
+val activity = LocalContext.current as ComponentActivity
+val viewModel: MainViewModel = viewModel(
+    viewModelStoreOwner = activity,
+    factory = app.mainViewModelFactory,
+)
+```
+
+---
+
+## Task 4 — Implement `ui/dialog/OrderDialog.kt`
+
+Full replacement of the stub. The file is split into the public entry-point composable
+`OrderDialogContent` and two private child composables `DrinkPickerContent` and
+`GlassPickerContent`.
+
+`canConfirm` is derived from the **live** `drinks` list (not just `selectedDrinkId`) so the
+buttons are automatically disabled if the selected drink becomes disabled or removed while the
+dialog is open:
+
+```kotlin
 package com.example.drinkwatch.ui.dialog
 
 import androidx.activity.ComponentActivity
@@ -316,3 +451,16 @@ private fun GlassPickerContent(
         }
     }
 }
+```
+
+---
+
+## Verification
+
+Run the full build and check suite:
+
+```powershell
+.\gradlew.bat assembleDebug lint testDebugUnitTest
+```
+
+All three must pass with zero errors and no new lint warnings introduced.

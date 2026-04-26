@@ -51,9 +51,11 @@ fun AppNavHost() {
                     onNavigateToSettings = dropUnlessResumed { backStack.add(Settings) },
                     onNavigateToAbout    = dropUnlessResumed { backStack.add(About) },
                     onNavigateToPlayerDetail = { id -> backStack.add(PlayerDetail(id)) },
-                    // dropUnlessResumed wraps () -> Unit only; (Long) -> Unit callbacks are
-                    // guarded at the call site when screens are implemented in Phases 6–9.
-                    onNavigateToOrderDialog  = { id -> backStack.add(OrderDialog(id)) },
+                    onNavigateToOrderDialog = { id ->
+                        if (backStack.none { it is OrderDialog }) {
+                            backStack.add(OrderDialog(id))
+                        }
+                    },
                 )
             }
 

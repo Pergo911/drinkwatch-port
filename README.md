@@ -170,8 +170,16 @@ queue FAB, and glasses badge on the bottom nav.
 | `ui/main/MainScreen.kt` | Added `SnackbarHostState`, `uiEvents` collection, replaced Order stub with `OrderTab`, passes badge count to nav bar |
 | `ui/main/BottomNavBar.kt` | Added `takenGlassCount: Int` param; Glasses icon wrapped in `BadgedBox` |
 
-### ⬜ Phase 9 — Order Full-Screen Dialog
-Two-step drink → glass picker; split Queue / Confirm Now button.
+### ✅ Phase 9 — Order Full-Screen Dialog
+
+Two-step drink → glass picker; split Queue / Confirm Now actions.
+
+| New / Modified | Description |
+|---|---|
+| `ui/dialog/OrderDialog.kt` | Replaces stub; full `Scaffold`-based two-step dialog: Step 1 `LazyColumn` drink picker grouped by `DrinkType` (disabled drinks dimmed at 0.38 alpha), Step 2 `FlowRow` glass-group chip selector + `OutlinedTextField` for glass number with inline "already taken" / "invalid" error |
+| `ui/main/MainScreen.kt` | Scopes `MainViewModel` to the Activity (`viewModelStoreOwner = activity`) so the dialog shares the same in-memory queue |
+| `ui/navigation/AppNavHost.kt` | Guards `onNavigateToOrderDialog` with `backStack.none { it is OrderDialog }` to prevent duplicate stacking |
+| `viewmodel/MainViewModel.kt` | Fixed `commitOrderNow` to also check in-memory `_queue` for glass conflicts (was DB-only; now matches `addToQueue` dual-check) |
 
 ### ⬜ Phase 10 — Glasses Tab
 `GlassCard` list; `ReturnGlassDialog`.

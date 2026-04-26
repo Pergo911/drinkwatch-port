@@ -189,7 +189,12 @@ class MainViewModel(
         viewModelScope.launch {
             val sessionId = _currentSession.value?.id ?: return@launch
             if (glassGroup != null && glassNumber != null) {
-                if (sessionRepository.isGlassTaken(sessionId, glassGroup, glassNumber)) {
+                val takenInDb    = sessionRepository.isGlassTaken(sessionId, glassGroup, glassNumber)
+                val takenInQueue = _queue.value.any {
+                    it.glassGroup == glassGroup && it.glassNumber == glassNumber
+                        && it.playerId != playerId
+                }
+                if (takenInDb || takenInQueue) {
                     _uiEvents.tryEmit(UiEvent.GlassAlreadyTaken)
                     return@launch
                 }
