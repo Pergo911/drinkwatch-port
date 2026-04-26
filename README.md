@@ -86,8 +86,23 @@ Updated: `DrinkWatchApplication.kt` — lazy `AppDatabase` initialization.
 | `data/db/dao/GlassGroupDao.kt` | Added `getByLetter()` query |
 | `DrinkWatchApplication.kt` | Wired `sessionRepository`, `settingsRepository`, `sessionSerializer` singletons |
 
-### ⬜ Phase 4 — Navigation (Navigation 3)
-`AppNavHost`, `AppRoute` sealed interface, conditional session guard, wired into `MainActivity`.
+### ✅ Phase 4 — Navigation (Navigation 3)
+
+`AppRoute` sealed interface with 6 `@Serializable` routes, `AppNavHost` with flat back stack,
+conditional session guard, `DialogSceneStrategy` for the order dialog, wired into `MainActivity`.
+
+| New files | Description |
+|---|---|
+| `ui/navigation/Routes.kt` | `AppRoute : NavKey` sealed interface; `Main`, `Session`, `Settings`, `About`, `PlayerDetail(playerId)`, `OrderDialog(playerId)` |
+| `ui/navigation/AppNavHost.kt` | `NavDisplay` with session guard, `DialogSceneStrategy`, `dropUnlessResumed` on nav callbacks |
+| `ui/main/MainScreen.kt` | Stub: `Scaffold` + `NavigationBar` (Order / Glasses tabs) |
+| `ui/session/SessionScreen.kt` | Stub placeholder |
+| `ui/settings/SettingsScreen.kt` | Stub placeholder |
+| `ui/about/AboutScreen.kt` | Stub placeholder |
+| `ui/player/PlayerDetailScreen.kt` | Stub placeholder |
+| `ui/dialog/OrderDialog.kt` | Stub `OrderDialogContent` (name avoids import conflict with route class) |
+
+Updated: `MainActivity.kt` — replaces `Greeting` stub with `AppNavHost()`.
 
 ### ⬜ Phase 5 — ViewModels
 `MainViewModel` (with 1-second ticker), `SessionViewModel`, `SettingsViewModel`, and their
