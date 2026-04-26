@@ -9,7 +9,7 @@ interface EventDao {
     @Insert
     suspend fun insert(event: EventEntity): Long
 
-    @Query("SELECT * FROM events WHERE sessionId = :sessionId ORDER BY timestampMs ASC")
+    @Query("SELECT * FROM events WHERE sessionId = :sessionId ORDER BY timestampMs ASC, id ASC")
     fun getBySession(sessionId: Long): Flow<List<EventEntity>>
 
     @Query("""

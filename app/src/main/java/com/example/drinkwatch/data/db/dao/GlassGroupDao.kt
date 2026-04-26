@@ -14,4 +14,7 @@ interface GlassGroupDao {
 
     @Query("SELECT * FROM glass_groups WHERE sessionId = :sessionId ORDER BY letter ASC")
     fun getAllBySession(sessionId: Long): Flow<List<GlassGroupEntity>>
+
+    @Query("SELECT * FROM glass_groups WHERE sessionId = :sessionId AND letter = :letter LIMIT 1")
+    suspend fun getByLetter(sessionId: Long, letter: String): GlassGroupEntity?
 }

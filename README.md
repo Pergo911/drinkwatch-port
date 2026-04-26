@@ -68,8 +68,23 @@ Domain data classes, Room entities with FK cascade deletes, DAOs, TypeConverters
 
 Updated: `DrinkWatchApplication.kt` — lazy `AppDatabase` initialization.
 
-### ⬜ Phase 3 — Repositories & Business Logic
+### ✅ Phase 3 — Repositories & Business Logic
+
 `SessionRepository`, `SettingsRepository`, `SessionSerializer`; unit tests for derived-state logic.
+
+| New / Modified | Description |
+|---|---|
+| `data/model/QueuedOrder.kt` | Queue-item data class |
+| `data/model/AppSettings.kt` | Settings data class + `Theme` enum |
+| `data/repository/SessionRepository.kt` | All session, player, drink, glass-group, event ops; derived-state computation; import/export |
+| `data/repository/SettingsRepository.kt` | DataStore-backed settings flow |
+| `data/serialization/SessionSnapshot.kt` | `@Serializable` flat transfer objects (with `version` field) |
+| `data/serialization/SessionSerializer.kt` | JSON export/import (delegates import to repository) |
+| `test/…/DerivedStateTest.kt` | 14 pure-Kotlin JUnit 4 tests for derived-state logic |
+| `data/db/dao/SessionDao.kt` | Added `exists()` query |
+| `data/db/dao/EventDao.kt` | Fixed sort order to `(timestampMs, id)` |
+| `data/db/dao/GlassGroupDao.kt` | Added `getByLetter()` query |
+| `DrinkWatchApplication.kt` | Wired `sessionRepository`, `settingsRepository`, `sessionSerializer` singletons |
 
 ### ⬜ Phase 4 — Navigation (Navigation 3)
 `AppNavHost`, `AppRoute` sealed interface, conditional session guard, wired into `MainActivity`.
