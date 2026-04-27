@@ -58,6 +58,7 @@ interface EventDao {
             AND e.glassNumber = o.glassNumber
             AND e.sessionId = :sessionId
         )
+        ORDER BY o.timestampMs ASC, o.id ASC
     """)
     fun getTakenGlasses(sessionId: Long): Flow<List<EventEntity>>
 

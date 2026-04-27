@@ -181,8 +181,17 @@ Two-step drink → glass picker; split Queue / Confirm Now actions.
 | `ui/navigation/AppNavHost.kt` | Guards `onNavigateToOrderDialog` with `backStack.none { it is OrderDialog }` to prevent duplicate stacking |
 | `viewmodel/MainViewModel.kt` | Fixed `commitOrderNow` to also check in-memory `_queue` for glass conflicts (was DB-only; now matches `addToQueue` dual-check) |
 
-### ⬜ Phase 10 — Glasses Tab
+### ✅ Phase 10 — Glasses Tab
+
 `GlassCard` list; `ReturnGlassDialog`.
+
+| New / Modified | Description |
+|---|---|
+| `ui/glasses/GlassCard.kt` | `ElevatedCard` + `ListItem`: headline = `"${group}${number}"`, supporting = drink name, trailing = player name |
+| `ui/glasses/GlassesTab.kt` | `LazyColumn` of `GlassCard`s; empty state ("No glasses out."); `ReturnGlassDialog` state via `?.let` closure |
+| `ui/dialog/ReturnGlassDialog.kt` | `AlertDialog` confirming glass return; shows glass ID and player name |
+| `ui/main/MainScreen.kt` | `GLASSES` stub replaced with `GlassesTab` |
+| `data/db/dao/EventDao.kt` | Added `ORDER BY o.timestampMs ASC, o.id ASC` to `getTakenGlasses` for deterministic ordering |
 
 ### ⬜ Phase 11 — Player Detail Screen
 Stats header, totals row, expandable drink and timeout history tables.
