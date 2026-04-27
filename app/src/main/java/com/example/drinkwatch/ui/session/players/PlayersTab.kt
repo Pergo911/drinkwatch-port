@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -130,7 +129,10 @@ private fun PlayerListItem(
     player: Player,
     onEdit: () -> Unit,
 ) {
-    Card(modifier = Modifier.fillMaxWidth().alpha(if (player.isDisabled) 0.38f else 1f)) {
+    Card(
+        onClick = onEdit,
+        modifier = Modifier.fillMaxWidth().alpha(if (player.isDisabled) 0.38f else 1f),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -171,9 +173,12 @@ private fun PlayerListItem(
                     )
                 }
             }
-            IconButton(onClick = onEdit) {
-                Icon(Icons.Filled.Edit, contentDescription = "Edit")
-            }
+            Icon(
+                Icons.Filled.Edit,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 8.dp),
+            )
         }
     }
 }

@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -140,7 +139,10 @@ private fun DrinkListItem(
     drink: Drink,
     onEdit: () -> Unit,
 ) {
-    Card(modifier = Modifier.fillMaxWidth().alpha(if (drink.isDisabled) 0.38f else 1f)) {
+    Card(
+        onClick = onEdit,
+        modifier = Modifier.fillMaxWidth().alpha(if (drink.isDisabled) 0.38f else 1f),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -184,9 +186,12 @@ private fun DrinkListItem(
                     modifier = Modifier.height(24.dp),
                 )
             }
-            IconButton(onClick = onEdit) {
-                Icon(Icons.Filled.Edit, contentDescription = "Edit")
-            }
+            Icon(
+                Icons.Filled.Edit,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 8.dp),
+            )
         }
     }
 }

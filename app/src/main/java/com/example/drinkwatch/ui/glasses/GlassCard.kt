@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -41,7 +42,7 @@ fun GlassCard(
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Glass group badge
+            // Glass icon badge
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -49,13 +50,23 @@ fun GlassCard(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.tertiaryContainer),
             ) {
-                Text(
-                    text = "${uiState.glassGroup}${uiState.glassNumber}",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                Icon(
+                    imageVector = Icons.Filled.LocalBar,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    modifier = Modifier.size(24.dp),
                 )
             }
+
+            Spacer(Modifier.width(8.dp))
+
+            // Glass number
+            Text(
+                text = "${uiState.glassGroup}${uiState.glassNumber}",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
 
             Spacer(Modifier.width(12.dp))
 
@@ -72,8 +83,8 @@ fun GlassCard(
             }
 
             Icon(
-                imageVector = Icons.Filled.LocalBar,
-                contentDescription = null,
+                imageVector = Icons.AutoMirrored.Filled.Undo,
+                contentDescription = "Return glass",
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(20.dp),
             )
