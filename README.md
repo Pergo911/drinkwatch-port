@@ -218,8 +218,14 @@ Theme selector, active-drink highlight threshold, default timeout duration.
 | `ui/settings/SettingsScreen.kt` | Replaces stub; `Scaffold`+`TopAppBar` (back nav), `Column+verticalScroll` body; `SingleChoiceSegmentedButtonRow` for Light/System/Dark theme; `OutlinedTextField` for highlight threshold (≥1 validation, auto-save on valid keystroke); Hours+Minutes `OutlinedTextField` pair for default timeout (minutes 0–59 validation) |
 | `MainActivity.kt` | Collects `settingsRepository.settings` as compose state via `collectAsStateWithLifecycle`; maps `Theme` enum to `darkTheme` bool; passes to `DrinkWatchTheme(darkTheme = …)` so theme applies immediately app-wide |
 
-### ⬜ Phase 13 — About Screen
-App name and version string from `BuildConfig.VERSION_NAME`.
+### ✅ Phase 13 — About Screen
+
+App name, version from `BuildConfig.VERSION_NAME`, and short description.
+
+| New / Modified | Description |
+|---|---|
+| `ui/about/AboutScreen.kt` | Replaces stub; `Scaffold`+`TopAppBar` (back arrow), centered scrollable `Column` with app name (`headlineLarge`), version string (`bodyLarge`), and short description (`bodyMedium`) |
+| `app/build.gradle.kts` | Added `buildConfig = true` to `buildFeatures` (required in AGP 8+ for `BuildConfig` class generation) |
 
 ### ⬜ Phase 14 — Polish & Edge Cases
 Empty states, disabled-item visuals, timeout-countdown accuracy, file-picker error handling,
