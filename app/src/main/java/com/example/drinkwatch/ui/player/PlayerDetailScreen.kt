@@ -9,10 +9,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -137,12 +144,14 @@ fun PlayerDetailScreen(
                         if (state.activeDrinkCount >= activeDrinkHighlight)
                             MaterialTheme.colorScheme.error
                         else
-                            MaterialTheme.colorScheme.onSurface
+                            MaterialTheme.colorScheme.secondary
 
                     StatCell(
                         label = "Active drinks",
                         value = state.activeDrinkCount.toString(),
                         valueColor = drinkHighlightColor,
+                        icon = Icons.Filled.LocalBar,
+                        iconColor = drinkHighlightColor,
                     )
                     StatCell(
                         label = "Timeout",
@@ -150,10 +159,17 @@ fun PlayerDetailScreen(
                             formatCountdown(timeoutMillisRemaining!!)
                         else
                             "—",
+                        icon = Icons.Filled.Timer,
+                        iconColor = if (isUnderTimeout)
+                            MaterialTheme.colorScheme.error
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     StatCell(
                         label = "Glasses out",
                         value = state.unreturnedGlassCount.toString(),
+                        icon = Icons.Filled.WineBar,
+                        iconColor = MaterialTheme.colorScheme.tertiary,
                     )
                 }
             }
@@ -173,10 +189,14 @@ fun PlayerDetailScreen(
                     StatCell(
                         label = "Total drinks",
                         value = state.totalDrinks.toString(),
+                        icon = Icons.Filled.LocalBar,
+                        iconColor = MaterialTheme.colorScheme.secondary,
                     )
                     StatCell(
                         label = "Total timeout",
                         value = formatDuration(state.totalTimeoutSeconds),
+                        icon = Icons.Filled.Schedule,
+                        iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -219,9 +239,18 @@ fun PlayerDetailScreen(
 private fun StatCell(
     label: String,
     value: String,
-    valueColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+    icon: ImageVector,
+    iconColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    valueColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = iconColor,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.height(4.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.titleLarge,
@@ -234,4 +263,3 @@ private fun StatCell(
         )
     }
 }
-

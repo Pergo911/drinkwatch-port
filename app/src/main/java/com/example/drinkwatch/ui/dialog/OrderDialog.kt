@@ -8,15 +8,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.LocalDrink
+import androidx.compose.material.icons.filled.SportsBar
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -233,22 +239,57 @@ private fun DrinkPickerContent(
         typeOrder.forEach { type ->
             val typeItems = grouped[type] ?: return@forEach
             item(key = "header_$type") {
-                Text(
-                    text = when (type) {
-                        DrinkType.SHOT          -> "Shots"
-                        DrinkType.LONG_DRINK    -> "Long Drinks"
-                        DrinkType.NON_ALCOHOLIC -> "Non-Alcoholic"
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.secondary,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                )
+                ) {
+                    Icon(
+                        imageVector = when (type) {
+                            DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                            DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
+                            DrinkType.NON_ALCOHOLIC -> Icons.Filled.WaterDrop
+                        },
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = when (type) {
+                            DrinkType.SHOT          -> "Shots"
+                            DrinkType.LONG_DRINK    -> "Long Drinks"
+                            DrinkType.NON_ALCOHOLIC -> "Non-Alcoholic"
+                        },
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                }
             }
             items(typeItems, key = { it.id }) { drink ->
                 ListItem(
                     headlineContent = { Text(drink.name) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = when (drink.type) {
+                                DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                                DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
+                                DrinkType.NON_ALCOHOLIC -> Icons.Filled.WaterDrop
+                            },
+                            contentDescription = null,
+                            tint = if (drink.id == selectedDrinkId)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    },
                     trailingContent = if (drink.id == selectedDrinkId) {
-                        { Icon(Icons.Filled.Check, contentDescription = null) }
+                        {
+                            Icon(
+                                Icons.Filled.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
                     } else null,
                     modifier = Modifier
                         .alpha(if (drink.isDisabled) 0.38f else 1f)

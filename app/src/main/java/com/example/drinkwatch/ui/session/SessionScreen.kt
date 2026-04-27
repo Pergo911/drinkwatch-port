@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.TableBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,6 +66,12 @@ fun SessionScreen(
     }
 
     val tabTitles = listOf("Overview", "Players", "Drinks", "Glass Groups")
+    val tabIcons = listOf(
+        Icons.Filled.Dashboard,
+        Icons.Filled.People,
+        Icons.Filled.LocalBar,
+        Icons.Filled.TableBar,
+    )
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
@@ -89,6 +99,12 @@ fun SessionScreen(
                         onClick = { selectedTab = index },
                         enabled = index == 0 || session != null,
                         text = { Text(title) },
+                        icon = {
+                            androidx.compose.material3.Icon(
+                                imageVector = tabIcons[index],
+                                contentDescription = null,
+                            )
+                        },
                     )
                 }
             }
