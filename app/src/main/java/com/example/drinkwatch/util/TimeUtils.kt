@@ -1,5 +1,8 @@
 package com.example.drinkwatch.util
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.max
 
 /** Formats a millisecond countdown as "MM:SS", clamped to "00:00". */
@@ -16,3 +19,7 @@ fun formatDuration(totalSeconds: Int): String {
     val minutes = (totalSeconds % 3600) / 60
     return "${hours}h ${minutes}m"
 }
+
+/** Formats an epoch-millisecond timestamp as "HH:mm:ss" in the device locale. */
+fun formatTimestamp(timestampMs: Long): String =
+    SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(timestampMs))

@@ -148,6 +148,12 @@ class SessionRepository(
     suspend fun isGlassTaken(sessionId: Long, group: Char, number: Int): Boolean =
         eventDao.isGlassTaken(sessionId, group.toString(), number)
 
+    // ── Player event history ──────────────────────────────────────────────────
+
+    fun observePlayerHistory(sessionId: Long, playerId: Long): Flow<List<Event>> =
+        eventDao.getByPlayer(sessionId, playerId)
+            .map { entities -> entities.map { it.toDomain() } }
+
     // ── Timeouts & Returns ────────────────────────────────────────────────────
 
     suspend fun startTimeout(

@@ -8,6 +8,7 @@ import com.example.drinkwatch.data.repository.SessionRepository
 import com.example.drinkwatch.data.repository.SettingsRepository
 import com.example.drinkwatch.data.serialization.SessionSerializer
 import com.example.drinkwatch.viewmodel.MainViewModel
+import com.example.drinkwatch.viewmodel.PlayerDetailViewModel
 import com.example.drinkwatch.viewmodel.SessionViewModel
 import com.example.drinkwatch.viewmodel.SettingsViewModel
 
@@ -58,6 +59,9 @@ class DrinkWatchApplication : Application() {
     val settingsViewModelFactory: SettingsViewModel.Factory by lazy {
         SettingsViewModel.Factory(settingsRepository)
     }
+
+    fun playerDetailViewModelFactory(playerId: Long): PlayerDetailViewModel.Factory =
+        PlayerDetailViewModel.Factory(sessionRepository, settingsRepository, playerId)
 }
 
 private val Application.settingsDataStore by preferencesDataStore(name = "settings")

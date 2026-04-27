@@ -15,7 +15,7 @@ interface EventDao {
     @Query("""
         SELECT * FROM events
         WHERE sessionId = :sessionId AND playerId = :playerId
-        ORDER BY timestampMs ASC
+        ORDER BY timestampMs ASC, id ASC
     """)
     fun getByPlayer(sessionId: Long, playerId: Long): Flow<List<EventEntity>>
 

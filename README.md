@@ -193,8 +193,21 @@ Two-step drink → glass picker; split Queue / Confirm Now actions.
 | `ui/main/MainScreen.kt` | `GLASSES` stub replaced with `GlassesTab` |
 | `data/db/dao/EventDao.kt` | Added `ORDER BY o.timestampMs ASC, o.id ASC` to `getTakenGlasses` for deterministic ordering |
 
-### ⬜ Phase 11 — Player Detail Screen
+### ✅ Phase 11 — Player Detail Screen
+
 Stats header, totals row, expandable drink and timeout history tables.
+
+| New / Modified | Description |
+|---|---|
+| `data/db/dao/EventDao.kt` | Fixed `getByPlayer` sort order to `(timestampMs, id)` for stable deterministic ordering |
+| `data/repository/SessionRepository.kt` | Added `observePlayerHistory(sessionId, playerId)` — thin wrapper exposing player events as domain `Event` objects |
+| `util/TimeUtils.kt` | Added `formatTimestamp()` — epoch-ms → `"HH:mm:ss"` via `SimpleDateFormat` |
+| `viewmodel/OrderHistoryItem.kt` | UI state model: `timestampMs`, `drinkName`, `glassGroup`, `glassNumber` |
+| `viewmodel/TimeoutHistoryItem.kt` | UI state model: `timestampMs`, `durationSeconds` |
+| `viewmodel/PlayerDetailViewModel.kt` | Entry-scoped ViewModel; ticker-driven timeout countdown; `orderHistory` and `timeoutHistory` flows; `"(deleted drink)"` fallback; `"Cancelled"` for 0-duration timeouts |
+| `DrinkWatchApplication.kt` | Added `playerDetailViewModelFactory(playerId: Long)` factory method |
+| `ui/player/ExpandableEventTable.kt` | Generic collapsible table composable (chevron toggle, column headers, `"No history."` placeholder) |
+| `ui/player/PlayerDetailScreen.kt` | Full implementation: `Scaffold` with back `TopAppBar`, `Column + verticalScroll` body, header (name/phone/notes), stats row, totals row, two `ExpandableEventTable`s; `"Player no longer available."` null-state |
 
 ### ⬜ Phase 12 — Settings Screen
 Theme selector, active-drink highlight threshold, default timeout duration.
