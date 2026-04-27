@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.Saver
@@ -31,6 +33,11 @@ fun MainBottomNavBar(
             onClick = { onTabSelected(MainTab.ORDER) },
             icon = { Icon(Icons.Filled.People, contentDescription = null) },
             label = { Text("Order") },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor    = MaterialTheme.colorScheme.primaryContainer,
+            ),
         )
         NavigationBarItem(
             selected = selectedTab == MainTab.GLASSES,
@@ -47,6 +54,11 @@ fun MainBottomNavBar(
                 }
             },
             label = { Text("Glasses") },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                indicatorColor    = MaterialTheme.colorScheme.primaryContainer,
+            ),
         )
     }
 }

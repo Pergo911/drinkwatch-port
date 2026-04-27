@@ -9,8 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.automirrored.filled.EventNote
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -139,12 +149,37 @@ private fun NoSessionContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Button(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
-            Text("Import From File")
-        }
-        Spacer(Modifier.height(16.dp))
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.EventNote,
+            contentDescription = null,
+            modifier = Modifier.size(72.dp),
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+        )
+        Spacer(Modifier.height(24.dp))
+        Text(
+            text = "No active session",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(24.dp))
         Button(onClick = onCreateNew, modifier = Modifier.fillMaxWidth()) {
-            Text("Create New")
+            Icon(
+                Icons.Filled.Add,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Create New Session")
+        }
+        Spacer(Modifier.height(12.dp))
+        OutlinedButton(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
+            Icon(
+                Icons.Filled.Download,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Import From File")
         }
     }
 }
@@ -183,12 +218,36 @@ private fun SessionLoadedContent(
                 },
         )
         Button(onClick = onExport, modifier = Modifier.fillMaxWidth()) {
+            Icon(
+                Icons.Filled.Upload,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text("Export to File")
         }
         OutlinedButton(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
+            Icon(
+                Icons.Filled.Download,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text("Import From File")
         }
-        OutlinedButton(onClick = onStartNew, modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            onClick = onStartNew,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error,
+            ),
+        ) {
+            Icon(
+                Icons.Filled.Refresh,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text("Start New Session")
         }
     }

@@ -6,15 +6,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -48,15 +52,25 @@ fun AboutScreen(onBack: () -> Unit) {
                 .padding(padding)
                 .padding(horizontal = 24.dp, vertical = 32.dp),
         ) {
+            Icon(
+                imageVector = Icons.Filled.LocalBar,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(80.dp),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "DrinkWatch",
                 style = MaterialTheme.typography.headlineLarge,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Version ${BuildConfig.VERSION_NAME}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            SuggestionChip(
+                onClick = {},
+                label = { Text("v${BuildConfig.VERSION_NAME}") },
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    labelColor     = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(

@@ -55,13 +55,13 @@ fun OrderTab(
                 Icon(
                     imageVector = Icons.Filled.People,
                     contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(72.dp),
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "No players yet.",
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = "No players yet",
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(4.dp))
@@ -105,10 +105,12 @@ fun OrderTab(
             ExtendedFloatingActionButton(
                 onClick = onCommitQueue,
                 icon = { Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null) },
-                text = { Text("Send ($queueSize)") },
+                text = { Text("Send $queueSize order${if (queueSize > 1) "s" else ""}") },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
             )
         }
     }
