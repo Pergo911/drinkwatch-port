@@ -1,6 +1,5 @@
 package com.example.drinkwatch.ui.dialog
 
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +45,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
+import com.example.drinkwatch.util.findActivity
 import com.example.drinkwatch.viewmodel.MainViewModel
 import com.example.drinkwatch.viewmodel.SessionViewModel
 
@@ -58,7 +58,7 @@ fun OrderDialogContent(
     onDismiss: () -> Unit,
 ) {
     val app = LocalContext.current.applicationContext as DrinkWatchApplication
-    val activity = LocalContext.current as ComponentActivity
+    val activity = LocalContext.current.findActivity()
 
     // Entry-scoped: purely reactive, no shared state required.
     val sessionVm: SessionViewModel = viewModel(factory = app.sessionViewModelFactory)
