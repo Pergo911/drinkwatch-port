@@ -1,7 +1,6 @@
 package com.example.drinkwatch.ui.glasses
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.LocalBar
@@ -42,31 +41,31 @@ fun GlassCard(
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Glass icon badge
+            Icon(
+                imageVector = Icons.Filled.LocalBar,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.size(24.dp),
+            )
+
+            Spacer(Modifier.width(8.dp))
+
+            // Glass text badge
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(CircleShape)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(MaterialTheme.colorScheme.tertiaryContainer),
             ) {
-                Icon(
-                    imageVector = Icons.Filled.LocalBar,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    modifier = Modifier.size(24.dp),
+
+                Text(
+                    text = "${uiState.glassGroup}${uiState.glassNumber}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
-
-            Spacer(Modifier.width(8.dp))
-
-            // Glass number
-            Text(
-                text = "${uiState.glassGroup}${uiState.glassNumber}",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
 
             Spacer(Modifier.width(12.dp))
 

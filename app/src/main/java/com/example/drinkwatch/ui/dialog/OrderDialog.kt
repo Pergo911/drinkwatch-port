@@ -20,8 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.SportsBar
-import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -245,8 +245,8 @@ private fun DrinkPickerContent(
                 ) {
                     Icon(
                         imageVector = when (type) {
-                            DrinkType.SHOT          -> Icons.Filled.SportsBar
-                            DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
+                            DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                            DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
                             DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
                         },
                         contentDescription = null,
@@ -271,8 +271,8 @@ private fun DrinkPickerContent(
                     leadingContent = {
                         Icon(
                             imageVector = when (drink.type) {
-                                DrinkType.SHOT          -> Icons.Filled.SportsBar
-                                DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
+                                DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                                DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
                                 DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
                             },
                             contentDescription = null,
@@ -335,32 +335,31 @@ private fun GlassPickerContent(
                 FilterChip(
                     selected = selectedGlassGroup == letter,
                     onClick = { onSelectGlassGroup(letter) },
-                    label = { Text(letter.toString()) },
+                    label = { Text("Group $letter") },
                 )
             }
         }
 
-        if (selectedGlassGroup != null) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-                key(selectedGlassGroup) {
-                    GlassNumberPicker(
-                        selectedNumber = selectedGlassNumber,
-                        takenNumbers = takenGlassNumbersForGroup,
-                        onNumberChange = onGlassNumberChange,
-                    )
-                }
-            }
-            if (glassIsAlreadyTaken) {
-                Text(
-                    text = "Glass $selectedGlassNumber is already taken.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            key(selectedGlassGroup) {
+                GlassNumberPicker(
+                    selectedNumber = selectedGlassNumber,
+                    takenNumbers = takenGlassNumbersForGroup,
+                    onNumberChange = onGlassNumberChange,
+                    enabled = selectedGlassGroup != null,
                 )
             }
+        }
+        if (glassIsAlreadyTaken) {
+            Text(
+                text = "Glass $selectedGlassNumber is already taken.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            )
         }
     }
 }

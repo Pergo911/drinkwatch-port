@@ -2,7 +2,7 @@ package com.example.drinkwatch.ui.session
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.Liquor
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.LocalBar
@@ -50,7 +50,7 @@ fun SessionTab(
 
     val tabTitles = listOf("Overview", "Players", "Drinks", "Glasses")
     val tabIcons = listOf(
-        Icons.Filled.Dashboard,
+        Icons.Filled.Dataset,
         Icons.Filled.People,
         Icons.Filled.Liquor,
         Icons.Filled.LocalBar,
