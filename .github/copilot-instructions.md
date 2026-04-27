@@ -44,7 +44,7 @@ UI state helpers in `viewmodel/`: `PlayerUiState`, `TakenGlassUiState`, `OrderHi
 
 Uses **Jetpack Navigation 3** (`androidx.navigation3`).
 
-- `Routes.kt` — sealed interface `AppRoute : NavKey` with `@Serializable` destinations: `Main`, `Session(openedAsGuard)`, `Settings`, `About`, `PlayerDetail(playerId)`, `OrderDialog(playerId)`.
+- `Routes.kt` — sealed interface `AppRoute : NavKey` with `@Serializable` destinations: `Main`, `Session(openedAsGuard)`, `Settings`, `PlayerDetail(playerId)`, `OrderDialog(playerId)`.
 - `AppNavHost.kt` — single `NavDisplay` that handles all back-stack navigation. When no session exists, navigation auto-redirects to `Session(openedAsGuard = true)`.
 
 ### UI layer (`ui/`)
@@ -63,7 +63,6 @@ ui/
     glassgroups/  GlassGroupsTab.kt
   dialog/         OrderDialog.kt, ReturnGlassDialog.kt, TimeoutDialog.kt
   settings/       SettingsScreen.kt
-  about/          AboutScreen.kt
 ```
 
 - No XML layouts. UI is 100% Jetpack Compose with Material3.

@@ -1,5 +1,7 @@
 package com.example.drinkwatch.ui.main
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -14,22 +16,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.LocalActivity
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
 import com.example.drinkwatch.ui.glasses.GlassesTab
 import com.example.drinkwatch.ui.order.OrderTab
+import com.example.drinkwatch.ui.session.SessionTab
 import com.example.drinkwatch.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
+@Suppress("OPT_IN_USAGE")
 @Composable
 fun MainScreen(
-    onNavigateToSession: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToAbout: () -> Unit,
     onNavigateToPlayerDetail: (Long) -> Unit,
     onNavigateToOrderDialog: (Long) -> Unit,
 ) {
@@ -48,9 +48,12 @@ fun MainScreen(
     val defaultTimeoutSeconds by viewModel.defaultTimeoutSeconds.collectAsStateWithLifecycle()
     val queue                 by viewModel.queue.collectAsStateWithLifecycle()
 
-    // Key by sessionId so the tab resets to ORDER whenever the session is replaced.
+    val hasSession = sessionId != null
+
+    // Default to SESSION when there is no active session, ORDER when one exists.
+    // Key by sessionId so the tab resets whenever the session is replaced.
     var selectedTab by rememberSaveable(sessionId, stateSaver = MainTabSaver) {
-        mutableStateOf(MainTab.ORDER)
+        mutableStateOf(if (hasSession) MainTab.ORDER else MainTab.SESSION)
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -69,9 +72,7 @@ fun MainScreen(
         topBar = {
             MainTopAppBar(
                 sessionName = sessionName,
-                onNavigateToSession = onNavigateToSession,
-                onNavigateToSettings = onNavigateToSettings,
-                onNavigateToAbout = onNavigateToAbout,
+                onSettingsClick = onNavigateToSettings,
             )
         },
         bottomBar = {
@@ -79,11 +80,21 @@ fun MainScreen(
                 selectedTab = selectedTab,
                 onTabSelected = { selectedTab = it },
                 takenGlassCount = takenGlasses.size,
+                hasSession = hasSession,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         when (selectedTab) {
+            MainTab.SESSION ->
+                SessionTab(
+                    onShowSnackbar = { msg ->
+                        coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                )
             MainTab.ORDER ->
                 OrderTab(
                     playerUiStates = playerUiStates,
