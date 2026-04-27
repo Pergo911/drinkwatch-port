@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
 import com.example.drinkwatch.data.model.Theme
+import com.example.drinkwatch.ui.component.DurationPicker
 import com.example.drinkwatch.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,16 +59,8 @@ fun SettingsScreen(onBack: () -> Unit) {
     var highlightText by rememberSaveable {
         mutableStateOf(settings.activeDrinkHighlight.toString())
     }
-    var timeoutHoursText by rememberSaveable {
-        mutableStateOf((settings.defaultTimeoutSeconds / 3600).toString())
-    }
-    var timeoutMinutesText by rememberSaveable {
-        mutableStateOf(((settings.defaultTimeoutSeconds % 3600) / 60).toString())
-    }
 
     val highlightError  = highlightText.toIntOrNull()?.let { it < 1 } ?: true
-    val timeoutMinutes  = timeoutMinutesText.toIntOrNull() ?: 0
-    val timeoutMinError = timeoutMinutes > 59
 
     Scaffold(
         topBar = {
@@ -130,39 +123,11 @@ fun SettingsScreen(onBack: () -> Unit) {
 
             // ── Default timeout ────────────────────────────────────────────────
             SectionHeader(icon = Icons.Filled.Timer, title = "Default Timeout")
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier              = Modifier.fillMaxWidth(),
-            ) {
-                OutlinedTextField(
-                    value = timeoutHoursText,
-                    onValueChange = { new ->
-                        timeoutHoursText = new.filter(Char::isDigit).trimStart('0').ifEmpty { "0" }
-                        val h = timeoutHoursText.toIntOrNull() ?: 0
-                        val m = timeoutMinutesText.toIntOrNull() ?: 0
-                        if (m <= 59) viewModel.setDefaultTimeoutSeconds(h * 3600 + m * 60)
-                    },
-                    label           = { Text("Hours") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine      = true,
-                    modifier        = Modifier.weight(1f),
-                )
-                OutlinedTextField(
-                    value = timeoutMinutesText,
-                    onValueChange = { new ->
-                        timeoutMinutesText = new.filter(Char::isDigit).trimStart('0').ifEmpty { "0" }
-                        val h = timeoutHoursText.toIntOrNull() ?: 0
-                        val m = timeoutMinutesText.toIntOrNull() ?: 0
-                        if (m <= 59) viewModel.setDefaultTimeoutSeconds(h * 3600 + m * 60)
-                    },
-                    label           = { Text("Minutes") },
-                    isError         = timeoutMinError,
-                    supportingText  = if (timeoutMinError) { { Text("0\u201359") } } else null,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine      = true,
-                    modifier        = Modifier.weight(1f),
-                )
-            }
+            DurationPicker(
+                initialSeconds = settings.defaultTimeoutSeconds,
+                onSecondsChange = { viewModel.setDefaultTimeoutSeconds(it) },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

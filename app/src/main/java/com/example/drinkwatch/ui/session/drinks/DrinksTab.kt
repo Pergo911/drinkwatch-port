@@ -121,6 +121,10 @@ fun DrinksTab(viewModel: SessionViewModel) {
                 viewModel.deleteDrink(drink)
                 editingDrink = null
             },
+            onToggleDisabled = {
+                if (drink.isDisabled) viewModel.enableDrink(drink) else viewModel.disableDrink(drink)
+                editingDrink = null
+            },
             onDismiss = { editingDrink = null },
         )
     }

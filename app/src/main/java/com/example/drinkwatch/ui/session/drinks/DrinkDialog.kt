@@ -6,9 +6,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -42,16 +53,17 @@ fun DrinkDialog(
     drink: Drink?,
     onSave: (name: String, type: DrinkType) -> Unit,
     onDelete: () -> Unit,
+    onToggleDisabled: () -> Unit = {},
     onDismiss: () -> Unit,
-) {
+){
     var name by rememberSaveable { mutableStateOf(drink?.name ?: "") }
     var selectedType by rememberSaveable { mutableStateOf(drink?.type ?: DrinkType.LONG_DRINK) }
     var showDeleteConfirm by rememberSaveable { mutableStateOf(false) }
 
     val drinkTypeOptions = listOf(
-        DrinkType.SHOT to "Shot",
-        DrinkType.LONG_DRINK to "Long drink",
-        DrinkType.NON_ALCOHOLIC to "Non-alcoholic",
+        Triple(DrinkType.SHOT, "Shot", Icons.Filled.LocalBar),
+        Triple(DrinkType.LONG_DRINK, "Long drink", Icons.Filled.WineBar),
+        Triple(DrinkType.NON_ALCOHOLIC, "Non-alcoholic", Icons.Filled.LocalCafe),
     )
 
     Dialog(
@@ -62,7 +74,18 @@ fun DrinkDialog(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopAppBar(
-                    title = { Text(if (drink != null) "Edit Drink" else "Add Drink") },
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Icon(
+                                imageVector = if (drink != null) Icons.Filled.Edit else Icons.Filled.LocalBar,
+                                contentDescription = null,
+                            )
+                            Text(if (drink != null) "Edit Drink" else "Add Drink")
+                        }
+                    },
                     navigationIcon = {
                         IconButton(onClick = onDismiss) {
                             Icon(Icons.Filled.Close, contentDescription = "Cancel")
@@ -72,7 +95,11 @@ fun DrinkDialog(
                         TextButton(
                             onClick = { onSave(name.trim(), selectedType) },
                             enabled = name.isNotBlank(),
-                        ) { Text("Save") }
+                        ) {
+                            Icon(Icons.Filled.Check, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                            Text("Save")
+                        }
                     },
                 )
             },
@@ -88,12 +115,13 @@ fun DrinkDialog(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name *") },
+                    leadingIcon = { Icon(Icons.Filled.LocalBar, contentDescription = null) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text("Type", style = MaterialTheme.typography.labelLarge)
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                    drinkTypeOptions.forEachIndexed { index, (type, label) ->
+                    drinkTypeOptions.forEachIndexed { index, (type, label, icon) ->
                         SegmentedButton(
                             selected = selectedType == type,
                             onClick = { selectedType = type },
@@ -101,19 +129,60 @@ fun DrinkDialog(
                                 index = index,
                                 count = drinkTypeOptions.size,
                             ),
+                            icon = {
+                                SegmentedButtonDefaults.Icon(active = selectedType == type) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                }
+                            },
                         ) { Text(label) }
                     }
                 }
 
                 if (drink != null) {
                     Spacer(Modifier.height(8.dp))
+                    if (drink.isDisabled) {
+                        OutlinedButton(
+                            onClick = {
+                                onToggleDisabled()
+                                onDismiss()
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Icon(Icons.Filled.Check, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                            Text("Enable Drink")
+                        }
+                    } else {
+                        OutlinedButton(
+                            onClick = {
+                                onToggleDisabled()
+                                onDismiss()
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error,
+                            ),
+                        ) {
+                            Icon(Icons.Filled.Block, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                            Text("Disable Drink")
+                        }
+                    }
                     OutlinedButton(
                         onClick = { showDeleteConfirm = true },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colorScheme.error,
                         ),
-                    ) { Text("Delete Drink") }
+                    ) {
+                        Icon(Icons.Filled.Delete, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                        Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                        Text("Delete Drink")
+                    }
                 }
             }
         }

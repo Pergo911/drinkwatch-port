@@ -80,9 +80,9 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun DrinkWatchTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+. Disabled by default so the custom
-    // Midnight Blue + Amber scheme is always displayed.
-    dynamicColor: Boolean = false,
+    // Dynamic color uses the system wallpaper palette on Android 12+; falls back to
+    // the static Blue/Amber scheme on older devices.
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

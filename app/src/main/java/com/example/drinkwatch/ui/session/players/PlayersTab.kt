@@ -116,6 +116,10 @@ fun PlayersTab(viewModel: SessionViewModel) {
                 viewModel.deletePlayer(player)
                 editingPlayer = null
             },
+            onToggleDisabled = {
+                if (player.isDisabled) viewModel.enablePlayer(player) else viewModel.disablePlayer(player)
+                editingPlayer = null
+            },
             onDismiss = { editingPlayer = null },
         )
     }

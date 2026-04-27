@@ -67,6 +67,22 @@ class SessionRepository(
         playerDao.setDisabled(playerId, true)
     }
 
+    suspend fun enablePlayer(
+        sessionId: Long,
+        playerId: Long,
+        nowMs: Long = System.currentTimeMillis(),
+    ) = db.withTransaction {
+        eventDao.insert(
+            EventEntity(
+                sessionId = sessionId,
+                timestampMs = nowMs,
+                type = EventEntity.TYPE_ENABLE_PLAYER,
+                playerId = playerId,
+            )
+        )
+        playerDao.setDisabled(playerId, false)
+    }
+
     fun observePlayers(sessionId: Long): Flow<List<Player>> =
         playerDao.getAllBySession(sessionId).map { list -> list.map { it.toDomain() } }
 
@@ -93,6 +109,22 @@ class SessionRepository(
             )
         )
         drinkDao.setDisabled(drinkId, true)
+    }
+
+    suspend fun enableDrink(
+        sessionId: Long,
+        drinkId: Long,
+        nowMs: Long = System.currentTimeMillis(),
+    ) = db.withTransaction {
+        eventDao.insert(
+            EventEntity(
+                sessionId = sessionId,
+                timestampMs = nowMs,
+                type = EventEntity.TYPE_ENABLE_DRINK,
+                drinkId = drinkId,
+            )
+        )
+        drinkDao.setDisabled(drinkId, false)
     }
 
     fun observeDrinks(sessionId: Long): Flow<List<Drink>> =
@@ -130,6 +162,15 @@ class SessionRepository(
                     nowMs = System.currentTimeMillis(),
                 )
             }
+        }
+
+    /**
+     * Maps each currently-unreturned glass key (group, number) to the event ID of its ORDER event.
+     * Used to determine whether a specific historical order still holds its glass.
+     */
+    fun observeTakenGlassEventIds(sessionId: Long): Flow<Map<Pair<Char, Int>, Long>> =
+        eventDao.getTakenGlasses(sessionId).map { entities ->
+            entities.associate { e -> Pair(e.glassGroup!!.first(), e.glassNumber!!) to e.id }
         }
 
     fun observeTakenGlasses(sessionId: Long): Flow<List<TakenGlass>> =
@@ -282,8 +323,9 @@ class SessionRepository(
                 EventEntity.TYPE_ORDER,
                 EventEntity.TYPE_TIMEOUT,
                 EventEntity.TYPE_DISABLE_PLAYER,
+                EventEntity.TYPE_ENABLE_PLAYER,
             )
-            val needsDrink = e.type in setOf(EventEntity.TYPE_ORDER, EventEntity.TYPE_DISABLE_DRINK)
+            val needsDrink = e.type in setOf(EventEntity.TYPE_ORDER, EventEntity.TYPE_DISABLE_DRINK, EventEntity.TYPE_ENABLE_DRINK)
 
             if (needsPlayer && newPlayerId == null) continue
             if (needsDrink && newDrinkId == null) continue
@@ -302,16 +344,24 @@ class SessionRepository(
             )
         }
 
-        // Re-derive isDisabled flags from events (source of truth).
+        // Re-derive isDisabled flags by replaying events in chronological order (last event wins).
         for (e in snapshot.events) {
             when (e.type) {
                 EventEntity.TYPE_DISABLE_PLAYER -> {
                     val newId = e.playerId?.let { playerIdMap[it] } ?: continue
                     playerDao.setDisabled(newId, true)
                 }
+                EventEntity.TYPE_ENABLE_PLAYER -> {
+                    val newId = e.playerId?.let { playerIdMap[it] } ?: continue
+                    playerDao.setDisabled(newId, false)
+                }
                 EventEntity.TYPE_DISABLE_DRINK -> {
                     val newId = e.drinkId?.let { drinkIdMap[it] } ?: continue
                     drinkDao.setDisabled(newId, true)
+                }
+                EventEntity.TYPE_ENABLE_DRINK -> {
+                    val newId = e.drinkId?.let { drinkIdMap[it] } ?: continue
+                    drinkDao.setDisabled(newId, false)
                 }
             }
         }
