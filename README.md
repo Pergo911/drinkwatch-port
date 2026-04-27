@@ -209,8 +209,14 @@ Stats header, totals row, expandable drink and timeout history tables.
 | `ui/player/ExpandableEventTable.kt` | Generic collapsible table composable (chevron toggle, column headers, `"No history."` placeholder) |
 | `ui/player/PlayerDetailScreen.kt` | Full implementation: `Scaffold` with back `TopAppBar`, `Column + verticalScroll` body, header (name/phone/notes), stats row, totals row, two `ExpandableEventTable`s; `"Player no longer available."` null-state |
 
-### ⬜ Phase 12 — Settings Screen
+### ✅ Phase 12 — Settings Screen
+
 Theme selector, active-drink highlight threshold, default timeout duration.
+
+| New / Modified | Description |
+|---|---|
+| `ui/settings/SettingsScreen.kt` | Replaces stub; `Scaffold`+`TopAppBar` (back nav), `Column+verticalScroll` body; `SingleChoiceSegmentedButtonRow` for Light/System/Dark theme; `OutlinedTextField` for highlight threshold (≥1 validation, auto-save on valid keystroke); Hours+Minutes `OutlinedTextField` pair for default timeout (minutes 0–59 validation) |
+| `MainActivity.kt` | Collects `settingsRepository.settings` as compose state via `collectAsStateWithLifecycle`; maps `Theme` enum to `darkTheme` bool; passes to `DrinkWatchTheme(darkTheme = …)` so theme applies immediately app-wide |
 
 ### ⬜ Phase 13 — About Screen
 App name and version string from `BuildConfig.VERSION_NAME`.
