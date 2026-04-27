@@ -9,10 +9,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +35,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -100,23 +112,90 @@ fun PlayerDetailScreen(
         ) {
 
             // ── Header ────────────────────────────────────────────────────────
-            Text(
-                text = player.name,
-                style = MaterialTheme.typography.headlineLarge,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.size(64.dp),
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(36.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = player.name,
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                    if (player.isDisabled) {
+                        Surface(
+                            shape = MaterialTheme.shapes.small,
+                            color = MaterialTheme.colorScheme.errorContainer,
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Block,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp),
+                                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                                )
+                                Text(
+                                    text = "Disabled",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
             if (player.phone.isNotBlank()) {
-                Text(
-                    text = player.phone,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Phone,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = player.phone,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             if (player.note.isNotBlank()) {
-                Text(
-                    text = player.note,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Notes,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = player.note,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -137,12 +216,14 @@ fun PlayerDetailScreen(
                         if (state.activeDrinkCount >= activeDrinkHighlight)
                             MaterialTheme.colorScheme.error
                         else
-                            MaterialTheme.colorScheme.onSurface
+                            MaterialTheme.colorScheme.secondary
 
                     StatCell(
                         label = "Active drinks",
                         value = state.activeDrinkCount.toString(),
                         valueColor = drinkHighlightColor,
+                        icon = Icons.Filled.LocalBar,
+                        iconColor = drinkHighlightColor,
                     )
                     StatCell(
                         label = "Timeout",
@@ -150,10 +231,17 @@ fun PlayerDetailScreen(
                             formatCountdown(timeoutMillisRemaining!!)
                         else
                             "—",
+                        icon = Icons.Filled.Timer,
+                        iconColor = if (isUnderTimeout)
+                            MaterialTheme.colorScheme.error
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     StatCell(
                         label = "Glasses out",
                         value = state.unreturnedGlassCount.toString(),
+                        icon = Icons.Filled.WineBar,
+                        iconColor = MaterialTheme.colorScheme.tertiary,
                     )
                 }
             }
@@ -173,10 +261,14 @@ fun PlayerDetailScreen(
                     StatCell(
                         label = "Total drinks",
                         value = state.totalDrinks.toString(),
+                        icon = Icons.Filled.LocalBar,
+                        iconColor = MaterialTheme.colorScheme.secondary,
                     )
                     StatCell(
                         label = "Total timeout",
                         value = formatDuration(state.totalTimeoutSeconds),
+                        icon = Icons.Filled.Schedule,
+                        iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -189,10 +281,10 @@ fun PlayerDetailScreen(
                     listOf(
                         formatTimestamp(item.timestampMs),
                         item.drinkName,
-                        if (item.glassGroup != null && item.glassNumber != null)
-                            "${item.glassGroup}${item.glassNumber}"
-                        else
-                            "—",
+                        if (item.glassGroup != null && item.glassNumber != null) {
+                            val label = "${item.glassGroup}${item.glassNumber}"
+                            if (item.glassReturned == false) "$label (out)" else label
+                        } else "—",
                     )
                 },
             )
@@ -219,9 +311,18 @@ fun PlayerDetailScreen(
 private fun StatCell(
     label: String,
     value: String,
-    valueColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
+    icon: ImageVector,
+    iconColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    valueColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = iconColor,
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.height(4.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.titleLarge,
@@ -234,4 +335,3 @@ private fun StatCell(
         )
     }
 }
-

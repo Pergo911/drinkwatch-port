@@ -8,15 +8,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.LocalDrink
+import androidx.compose.material.icons.filled.SportsBar
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -25,12 +30,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,13 +44,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
+import com.example.drinkwatch.ui.component.GlassNumberPicker
 import com.example.drinkwatch.util.findActivity
 import com.example.drinkwatch.viewmodel.MainViewModel
 import com.example.drinkwatch.viewmodel.SessionViewModel
@@ -76,7 +82,7 @@ fun OrderDialogContent(
     var step by remember { mutableStateOf(Step.DRINK) }
     var selectedDrinkId by remember { mutableStateOf<Long?>(null) }
     var selectedGlassGroup by remember { mutableStateOf<Char?>(null) }
-    var glassNumberText by remember { mutableStateOf("") }
+    var selectedGlassNumber by remember { mutableIntStateOf(1) }
 
     // System back: Step 2 → Step 1; Step 1 → dismiss (handled by Nav3 default).
     BackHandler(enabled = step == Step.GLASS) {
@@ -88,24 +94,18 @@ fun OrderDialogContent(
     // Resolve against live list so buttons disable if the drink is removed/disabled mid-session.
     val selectedDrink = drinks.firstOrNull { it.id == selectedDrinkId && !it.isDisabled }
 
-    val glassNumber = glassNumberText.toIntOrNull()?.takeIf { it > 0 }
-    val glassIsAlreadyTaken = selectedGlassGroup != null && glassNumber != null && (
-        takenGlasses.any { it.glassGroup == selectedGlassGroup && it.glassNumber == glassNumber } ||
-        queue.any {
-            it.glassGroup == selectedGlassGroup &&
-                it.glassNumber == glassNumber &&
-                it.playerId != playerId
-        }
-    )
-    // True when the user has typed something but it cannot be parsed as a positive integer.
-    val glassNumberInvalid = selectedGlassGroup != null &&
-        glassNumberText.isNotEmpty() && glassNumber == null
+    val takenGlassNumbersForGroup: Set<Int> = if (selectedGlassGroup != null) {
+        (takenGlasses.filter { it.glassGroup == selectedGlassGroup }.map { it.glassNumber } +
+            queue.filter { it.glassGroup == selectedGlassGroup && it.playerId != playerId }
+                .mapNotNull { it.glassNumber })
+            .toSet()
+    } else emptySet()
 
-    // Confirm is allowed when the drink is valid and either no glass is selected, or a valid
-    // non-taken glass number is entered.
-    val canConfirm = selectedDrink != null && (
-        selectedGlassGroup == null || (glassNumber != null && !glassIsAlreadyTaken)
-    )
+    val glassIsAlreadyTaken = selectedGlassGroup != null && selectedGlassNumber in takenGlassNumbersForGroup
+
+    // Confirm is allowed when the drink is valid and either no glass is selected, or the
+    // selected glass number is not already taken.
+    val canConfirm = selectedDrink != null && (selectedGlassGroup == null || !glassIsAlreadyTaken)
 
     // ── Layout ────────────────────────────────────────────────────────────────
 
@@ -151,7 +151,7 @@ fun OrderDialogContent(
                                     playerId,
                                     selectedDrink!!.id,
                                     selectedGlassGroup,
-                                    glassNumber,
+                                    if (selectedGlassGroup != null) selectedGlassNumber else null,
                                 )
                                 onDismiss()
                             },
@@ -164,7 +164,7 @@ fun OrderDialogContent(
                                     playerId,
                                     selectedDrink!!.id,
                                     selectedGlassGroup,
-                                    glassNumber,
+                                    if (selectedGlassGroup != null) selectedGlassNumber else null,
                                 )
                                 onDismiss()
                             },
@@ -191,14 +191,20 @@ fun OrderDialogContent(
                     selectedGlassGroup = selectedGlassGroup,
                     onSelectGlassGroup = { letter ->
                         selectedGlassGroup = letter
-                        glassNumberText = ""
+                        if (letter != null) {
+                            val takenForGroup = (
+                                takenGlasses.filter { it.glassGroup == letter }.map { it.glassNumber } +
+                                    queue.filter { it.glassGroup == letter && it.playerId != playerId }
+                                        .mapNotNull { it.glassNumber }
+                            ).toSet()
+                            selectedGlassNumber = (1..99).firstOrNull { it !in takenForGroup } ?: 1
+                        } else {
+                            selectedGlassNumber = 1
+                        }
                     },
-                    glassNumberText = glassNumberText,
-                    onGlassNumberChange = { raw ->
-                        glassNumberText = raw.filter(Char::isDigit).trimStart('0').ifEmpty { "" }
-                    },
-                    glassIsAlreadyTaken = glassIsAlreadyTaken,
-                    glassNumberInvalid = glassNumberInvalid,
+                    selectedGlassNumber = selectedGlassNumber,
+                    onGlassNumberChange = { selectedGlassNumber = it },
+                    takenGlassNumbersForGroup = takenGlassNumbersForGroup,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
@@ -233,22 +239,57 @@ private fun DrinkPickerContent(
         typeOrder.forEach { type ->
             val typeItems = grouped[type] ?: return@forEach
             item(key = "header_$type") {
-                Text(
-                    text = when (type) {
-                        DrinkType.SHOT          -> "Shots"
-                        DrinkType.LONG_DRINK    -> "Long Drinks"
-                        DrinkType.NON_ALCOHOLIC -> "Non-Alcoholic"
-                    },
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.secondary,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                )
+                ) {
+                    Icon(
+                        imageVector = when (type) {
+                            DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                            DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
+                            DrinkType.NON_ALCOHOLIC -> Icons.Filled.WaterDrop
+                        },
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = when (type) {
+                            DrinkType.SHOT          -> "Shots"
+                            DrinkType.LONG_DRINK    -> "Long Drinks"
+                            DrinkType.NON_ALCOHOLIC -> "Non-Alcoholic"
+                        },
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )
+                }
             }
             items(typeItems, key = { it.id }) { drink ->
                 ListItem(
                     headlineContent = { Text(drink.name) },
+                    leadingContent = {
+                        Icon(
+                            imageVector = when (drink.type) {
+                                DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                                DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
+                                DrinkType.NON_ALCOHOLIC -> Icons.Filled.WaterDrop
+                            },
+                            contentDescription = null,
+                            tint = if (drink.id == selectedDrinkId)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    },
                     trailingContent = if (drink.id == selectedDrinkId) {
-                        { Icon(Icons.Filled.Check, contentDescription = null) }
+                        {
+                            Icon(
+                                Icons.Filled.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
                     } else null,
                     modifier = Modifier
                         .alpha(if (drink.isDisabled) 0.38f else 1f)
@@ -271,12 +312,13 @@ private fun GlassPickerContent(
     glassGroupLetters: List<Char>,
     selectedGlassGroup: Char?,
     onSelectGlassGroup: (Char?) -> Unit,
-    glassNumberText: String,
-    onGlassNumberChange: (String) -> Unit,
-    glassIsAlreadyTaken: Boolean,
-    glassNumberInvalid: Boolean,
+    selectedGlassNumber: Int,
+    onGlassNumberChange: (Int) -> Unit,
+    takenGlassNumbersForGroup: Set<Int>,
     modifier: Modifier = Modifier,
 ) {
+    val glassIsAlreadyTaken = selectedGlassGroup != null && selectedGlassNumber in takenGlassNumbersForGroup
+
     Column(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -299,20 +341,26 @@ private fun GlassPickerContent(
         }
 
         if (selectedGlassGroup != null) {
-            OutlinedTextField(
-                value = glassNumberText,
-                onValueChange = onGlassNumberChange,
-                label = { Text("Glass Number") },
-                isError = glassIsAlreadyTaken || glassNumberInvalid,
-                supportingText = when {
-                    glassIsAlreadyTaken  -> { { Text("This glass is already taken.") } }
-                    glassNumberInvalid   -> { { Text("Enter a positive number.") } }
-                    else                 -> null
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
+            Box(
                 modifier = Modifier.fillMaxWidth(),
-            )
+                contentAlignment = Alignment.Center,
+            ) {
+                key(selectedGlassGroup) {
+                    GlassNumberPicker(
+                        selectedNumber = selectedGlassNumber,
+                        takenNumbers = takenGlassNumbersForGroup,
+                        onNumberChange = onGlassNumberChange,
+                    )
+                }
+            }
+            if (glassIsAlreadyTaken) {
+                Text(
+                    text = "Glass $selectedGlassNumber is already taken.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+            }
         }
     }
 }

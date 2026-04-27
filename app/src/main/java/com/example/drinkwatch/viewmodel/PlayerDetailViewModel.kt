@@ -72,14 +72,22 @@ class PlayerDetailViewModel(
             combine(
                 sessionRepository.observePlayerHistory(session.id, playerId),
                 sessionRepository.observeDrinks(session.id),
-            ) { events, drinks ->
+                sessionRepository.observeTakenGlassEventIds(session.id),
+            ) { events, drinks, takenGlassEventIds ->
                 val drinkById = drinks.associateBy { it.id }
                 events.filterIsInstance<Event.Order>().map { order ->
+                    val glassReturned: Boolean? =
+                        if (order.glassGroup != null && order.glassNumber != null) {
+                            // The glass is unreturned only if this specific order event is the
+                            // current owner. A different event id (or no entry) means it was returned.
+                            takenGlassEventIds[Pair(order.glassGroup, order.glassNumber)] != order.id
+                        } else null
                     OrderHistoryItem(
                         timestampMs = order.timestampMs,
                         drinkName = drinkById[order.drinkId]?.name ?: "(deleted drink)",
                         glassGroup = order.glassGroup,
                         glassNumber = order.glassNumber,
+                        glassReturned = glassReturned,
                     )
                 }
             }

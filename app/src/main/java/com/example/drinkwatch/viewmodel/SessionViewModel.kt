@@ -101,6 +101,13 @@ class SessionViewModel(
         }
     }
 
+    fun enablePlayer(player: Player) {
+        viewModelScope.launch {
+            val sessionId = currentSession.value?.id ?: return@launch
+            sessionRepository.enablePlayer(sessionId, player.id)
+        }
+    }
+
     // ── Drink actions ─────────────────────────────────────────────────────────
 
     fun addDrink(name: String, type: DrinkType) {
@@ -122,6 +129,13 @@ class SessionViewModel(
         viewModelScope.launch {
             val sessionId = currentSession.value?.id ?: return@launch
             sessionRepository.disableDrink(sessionId, drink.id)
+        }
+    }
+
+    fun enableDrink(drink: Drink) {
+        viewModelScope.launch {
+            val sessionId = currentSession.value?.id ?: return@launch
+            sessionRepository.enableDrink(sessionId, drink.id)
         }
     }
 

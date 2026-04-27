@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,8 +60,8 @@ fun ExpandableEventTable(
                     modifier = Modifier.weight(1f),
                 )
                 Icon(
-                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
-                                  else Icons.Filled.KeyboardArrowDown,
+                    imageVector = if (expanded) Icons.Filled.ExpandLess
+                                  else Icons.Filled.ExpandMore,
                     contentDescription = if (expanded) "Collapse" else "Expand",
                 )
             }

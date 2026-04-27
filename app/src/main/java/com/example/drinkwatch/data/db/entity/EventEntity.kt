@@ -30,6 +30,8 @@ data class EventEntity(
         const val TYPE_TIMEOUT = "TIMEOUT"
         const val TYPE_DISABLE_PLAYER = "DISABLE_PLAYER"
         const val TYPE_DISABLE_DRINK = "DISABLE_DRINK"
+        const val TYPE_ENABLE_PLAYER = "ENABLE_PLAYER"
+        const val TYPE_ENABLE_DRINK = "ENABLE_DRINK"
     }
 }
 
@@ -56,6 +58,14 @@ fun EventEntity.toDomain(): Event = when (type) {
         playerId = requireNotNull(playerId),
     )
     EventEntity.TYPE_DISABLE_DRINK -> Event.DisableDrink(
+        id = id, sessionId = sessionId, timestampMs = timestampMs,
+        drinkId = requireNotNull(drinkId),
+    )
+    EventEntity.TYPE_ENABLE_PLAYER -> Event.EnablePlayer(
+        id = id, sessionId = sessionId, timestampMs = timestampMs,
+        playerId = requireNotNull(playerId),
+    )
+    EventEntity.TYPE_ENABLE_DRINK -> Event.EnableDrink(
         id = id, sessionId = sessionId, timestampMs = timestampMs,
         drinkId = requireNotNull(drinkId),
     )
@@ -87,6 +97,16 @@ fun Event.toEntity(): EventEntity = when (this) {
     is Event.DisableDrink -> EventEntity(
         id = id, sessionId = sessionId, timestampMs = timestampMs,
         type = EventEntity.TYPE_DISABLE_DRINK,
+        drinkId = drinkId,
+    )
+    is Event.EnablePlayer -> EventEntity(
+        id = id, sessionId = sessionId, timestampMs = timestampMs,
+        type = EventEntity.TYPE_ENABLE_PLAYER,
+        playerId = playerId,
+    )
+    is Event.EnableDrink -> EventEntity(
+        id = id, sessionId = sessionId, timestampMs = timestampMs,
+        type = EventEntity.TYPE_ENABLE_DRINK,
         drinkId = drinkId,
     )
 }

@@ -44,4 +44,18 @@ sealed class Event {
         override val timestampMs: Long,
         val drinkId: Long,
     ) : Event()
+
+    data class EnablePlayer(
+        override val id: Long,
+        override val sessionId: Long,
+        override val timestampMs: Long,
+        val playerId: Long,
+    ) : Event()
+
+    data class EnableDrink(
+        override val id: Long,
+        override val sessionId: Long,
+        override val timestampMs: Long,
+        val drinkId: Long,
+    ) : Event()
 }

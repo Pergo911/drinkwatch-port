@@ -1,9 +1,13 @@
 package com.example.drinkwatch.ui.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.dropUnlessResumed
@@ -42,70 +46,75 @@ fun AppNavHost() {
 
     val dialogStrategy = remember { DialogSceneStrategy<AppRoute>() }
 
-    NavDisplay(
-        backStack = backStack,
-        onBack = popOrFinish,
-        sceneStrategies = listOf(dialogStrategy),
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-        ),
-        entryProvider = entryProvider {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        NavDisplay(
+            backStack = backStack,
+            onBack = popOrFinish,
+            sceneStrategies = listOf(dialogStrategy),
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
+            entryProvider = entryProvider {
 
-            entry<Main> {
-                MainScreen(
-                    onNavigateToSession  = dropUnlessResumed { backStack.add(Session()) },
-                    onNavigateToSettings = dropUnlessResumed { backStack.add(Settings) },
-                    onNavigateToAbout    = dropUnlessResumed { backStack.add(About) },
-                    onNavigateToPlayerDetail = { id -> backStack.add(PlayerDetail(id)) },
-                    onNavigateToOrderDialog = { id ->
-                        if (backStack.none { it is OrderDialog }) {
-                            backStack.add(OrderDialog(id))
-                        }
-                    },
-                )
-            }
+                entry<Main> {
+                    MainScreen(
+                        onNavigateToSession  = dropUnlessResumed { backStack.add(Session()) },
+                        onNavigateToSettings = dropUnlessResumed { backStack.add(Settings) },
+                        onNavigateToAbout    = dropUnlessResumed { backStack.add(About) },
+                        onNavigateToPlayerDetail = { id -> backStack.add(PlayerDetail(id)) },
+                        onNavigateToOrderDialog = { id ->
+                            if (backStack.none { it is OrderDialog }) {
+                                backStack.add(OrderDialog(id))
+                            }
+                        },
+                    )
+                }
 
-            entry<Session> { key ->
-                SessionScreen(
-                    openedAsGuard = key.openedAsGuard,
-                    onNavigateToMain = dropUnlessResumed {
-                        backStack.clear()
-                        backStack.add(Main)
-                    },
-                    onBack = if (key.openedAsGuard) {
-                        dropUnlessResumed { activity.finish() }
-                    } else {
-                        dropUnlessResumed { backStack.removeLastOrNull() }
-                    },
-                )
-            }
+                entry<Session> { key ->
+                    SessionScreen(
+                        openedAsGuard = key.openedAsGuard,
+                        onNavigateToMain = dropUnlessResumed {
+                            backStack.clear()
+                            backStack.add(Main)
+                        },
+                        onBack = if (key.openedAsGuard) {
+                            dropUnlessResumed { activity.finish() }
+                        } else {
+                            dropUnlessResumed { backStack.removeLastOrNull() }
+                        },
+                    )
+                }
 
-            entry<Settings> {
-                SettingsScreen(onBack = dropUnlessResumed { backStack.removeLastOrNull() })
-            }
+                entry<Settings> {
+                    SettingsScreen(onBack = dropUnlessResumed { backStack.removeLastOrNull() })
+                }
 
-            entry<About> {
-                AboutScreen(onBack = dropUnlessResumed { backStack.removeLastOrNull() })
-            }
+                entry<About> {
+                    AboutScreen(onBack = dropUnlessResumed { backStack.removeLastOrNull() })
+                }
 
-            entry<PlayerDetail> { key ->
-                PlayerDetailScreen(
-                    playerId = key.playerId,
-                    onBack   = dropUnlessResumed { backStack.removeLastOrNull() },
-                )
-            }
+                entry<PlayerDetail> { key ->
+                    PlayerDetailScreen(
+                        playerId = key.playerId,
+                        onBack   = dropUnlessResumed { backStack.removeLastOrNull() },
+                    )
+                }
 
-            entry<OrderDialog>(
-                metadata = DialogSceneStrategy.dialog(
-                    DialogProperties(usePlatformDefaultWidth = false)
-                )
-            ) { key ->
-                OrderDialogContent(
-                    playerId  = key.playerId,
-                    onDismiss = dropUnlessResumed { backStack.removeLastOrNull() },
-                )
-            }
-        },
-    )
+                entry<OrderDialog>(
+                    metadata = DialogSceneStrategy.dialog(
+                        DialogProperties(usePlatformDefaultWidth = false)
+                    )
+                ) { key ->
+                    OrderDialogContent(
+                        playerId  = key.playerId,
+                        onDismiss = dropUnlessResumed { backStack.removeLastOrNull() },
+                    )
+                }
+            },
+        )
+    }
 }
