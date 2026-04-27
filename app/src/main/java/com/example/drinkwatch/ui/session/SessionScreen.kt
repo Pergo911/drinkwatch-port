@@ -3,6 +3,7 @@ package com.example.drinkwatch.ui.session
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.draw.alpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Dashboard
@@ -94,10 +95,12 @@ fun SessionScreen(
         ) {
             SecondaryTabRow(selectedTabIndex = selectedTab) {
                 tabTitles.forEachIndexed { index, title ->
+                    val isEnabled = index == 0 || session != null
                     Tab(
                         selected = selectedTab == index,
                         onClick = { selectedTab = index },
-                        enabled = index == 0 || session != null,
+                        enabled = isEnabled,
+                        modifier = if (!isEnabled) Modifier.alpha(0.38f) else Modifier,
                         text = { Text(title) },
                         icon = {
                             androidx.compose.material3.Icon(
