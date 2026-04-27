@@ -17,9 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Liquor
+import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -221,7 +222,7 @@ fun PlayerDetailScreen(
                         label = "Active drinks",
                         value = state.activeDrinkCount.toString(),
                         valueColor = drinkHighlightColor,
-                        icon = Icons.Filled.LocalBar,
+                        icon = Icons.Filled.Liquor,
                         iconColor = drinkHighlightColor,
                     )
                     StatCell(
@@ -260,7 +261,7 @@ fun PlayerDetailScreen(
                     StatCell(
                         label = "Total drinks",
                         value = state.totalDrinks.toString(),
-                        icon = Icons.Filled.LocalBar,
+                        icon = Icons.Filled.Liquor,
                         iconColor = MaterialTheme.colorScheme.secondary,
                     )
                     StatCell(

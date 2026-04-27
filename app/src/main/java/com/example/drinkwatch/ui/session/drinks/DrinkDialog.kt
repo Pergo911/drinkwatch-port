@@ -16,7 +16,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.Liquor
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -78,7 +78,7 @@ fun DrinkDialog(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Icon(
-                                imageVector = if (drink != null) Icons.Filled.Edit else Icons.Filled.LocalBar,
+                                imageVector = if (drink != null) Icons.Filled.Edit else Icons.Filled.Liquor,
                                 contentDescription = null,
                             )
                             Text(if (drink != null) "Edit Drink" else "Add Drink")
@@ -113,7 +113,7 @@ fun DrinkDialog(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name *") },
-                    leadingIcon = { Icon(Icons.Filled.LocalBar, contentDescription = null) },
+                    leadingIcon = { Icon(Icons.Filled.Liquor, contentDescription = null) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )

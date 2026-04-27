@@ -18,8 +18,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.Liquor
 import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
@@ -60,7 +61,7 @@ fun DrinksTab(viewModel: SessionViewModel) {
                 verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
-                    imageVector = Icons.Filled.LocalBar,
+                    imageVector = Icons.Filled.Liquor,
                     contentDescription = null,
                     modifier = Modifier.size(72.dp),
                     tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
@@ -129,7 +130,7 @@ fun DrinksTab(viewModel: SessionViewModel) {
 }
 
 private fun drinkTypeIcon(type: DrinkType): ImageVector = when (type) {
-    DrinkType.SHOT          -> Icons.Filled.LocalBar
+    DrinkType.SHOT          -> Icons.Filled.SportsBar
     DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
     DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
 }

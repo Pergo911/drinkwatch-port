@@ -3,9 +3,9 @@ package com.example.drinkwatch.ui.session
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.Liquor
 import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.TableBar
+import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SecondaryTabRow
@@ -48,12 +48,12 @@ fun SessionTab(
         }
     }
 
-    val tabTitles = listOf("Overview", "Players", "Drinks", "Glass Groups")
+    val tabTitles = listOf("Overview", "Players", "Drinks", "Glasses")
     val tabIcons = listOf(
         Icons.Filled.Dashboard,
         Icons.Filled.People,
+        Icons.Filled.Liquor,
         Icons.Filled.LocalBar,
-        Icons.Filled.TableBar,
     )
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 

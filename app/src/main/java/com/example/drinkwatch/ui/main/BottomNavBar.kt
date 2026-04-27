@@ -1,9 +1,9 @@
 package com.example.drinkwatch.ui.main
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.TableBar
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
@@ -33,7 +33,7 @@ fun MainBottomNavBar(
         NavigationBarItem(
             selected = selectedTab == MainTab.SESSION,
             onClick = { onTabSelected(MainTab.SESSION) },
-            icon = { Icon(Icons.Filled.TableBar, contentDescription = null) },
+            icon = { Icon(Icons.Filled.Dataset, contentDescription = null) },
             label = { Text("Session") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,

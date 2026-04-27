@@ -19,8 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -245,7 +245,7 @@ private fun DrinkPickerContent(
                 ) {
                     Icon(
                         imageVector = when (type) {
-                            DrinkType.SHOT          -> Icons.Filled.LocalBar
+                            DrinkType.SHOT          -> Icons.Filled.SportsBar
                             DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
                             DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
                         },
@@ -271,7 +271,7 @@ private fun DrinkPickerContent(
                     leadingContent = {
                         Icon(
                             imageVector = when (drink.type) {
-                                DrinkType.SHOT          -> Icons.Filled.LocalBar
+                                DrinkType.SHOT          -> Icons.Filled.SportsBar
                                 DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
                                 DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
                             },
