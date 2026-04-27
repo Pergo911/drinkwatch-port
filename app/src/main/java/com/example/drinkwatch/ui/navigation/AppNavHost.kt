@@ -19,10 +19,12 @@ import com.example.drinkwatch.ui.main.MainScreen
 import com.example.drinkwatch.ui.player.PlayerDetailScreen
 import com.example.drinkwatch.ui.session.SessionScreen
 import com.example.drinkwatch.ui.settings.SettingsScreen
+import com.example.drinkwatch.util.findActivity
 
 @Composable
 fun AppNavHost() {
     val app = LocalContext.current.applicationContext as DrinkWatchApplication
+    val activity = LocalContext.current.findActivity()
 
     val backStack = remember { mutableStateListOf<AppRoute>(Main) }
 
@@ -33,11 +35,16 @@ fun AppNavHost() {
         }
     }
 
+    val popOrFinish: () -> Unit = {
+        if (backStack.size <= 1) activity.finish()
+        else backStack.removeLastOrNull()
+    }
+
     val dialogStrategy = remember { DialogSceneStrategy<AppRoute>() }
 
     NavDisplay(
         backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
+        onBack = popOrFinish,
         sceneStrategies = listOf(dialogStrategy),
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
@@ -66,7 +73,11 @@ fun AppNavHost() {
                         backStack.clear()
                         backStack.add(Main)
                     },
-                    onBack = dropUnlessResumed { backStack.removeLastOrNull() },
+                    onBack = if (key.openedAsGuard) {
+                        dropUnlessResumed { activity.finish() }
+                    } else {
+                        dropUnlessResumed { backStack.removeLastOrNull() }
+                    },
                 )
             }
 

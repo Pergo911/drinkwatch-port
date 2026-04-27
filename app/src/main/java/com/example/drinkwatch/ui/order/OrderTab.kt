@@ -2,15 +2,21 @@ package com.example.drinkwatch.ui.order
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,31 +46,58 @@ fun OrderTab(
     var timeoutDialogPlayerId by remember { mutableStateOf<Long?>(null) }
 
     Box(modifier = modifier) {
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 8.dp,
-                bottom = if (queueSize > 0) 88.dp else 8.dp,
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            items(playerUiStates, key = { it.derived.player.id }) { uiState ->
-                PlayerCard(
-                    playerUiState = uiState,
-                    activeDrinkHighlight = activeDrinkHighlight,
-                    onAddDrink = {
-                        if (uiState.queuedOrder != null) {
-                            onShowSnackbar("Cancel or send the queue first.")
-                        } else {
-                            onNavigateToOrderDialog(uiState.derived.player.id)
-                        }
-                    },
-                    onTimeout = { timeoutDialogPlayerId = uiState.derived.player.id },
-                    onCardClick = { onNavigateToPlayerDetail(uiState.derived.player.id) },
-                    onCancelOrder = { onCancelQueuedOrder(uiState.derived.player.id) },
+        if (playerUiStates.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.People,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "No players yet.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "Add players in Session → Players.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 8.dp,
+                    bottom = if (queueSize > 0) 88.dp else 8.dp,
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                items(playerUiStates, key = { it.derived.player.id }) { uiState ->
+                    PlayerCard(
+                        playerUiState = uiState,
+                        activeDrinkHighlight = activeDrinkHighlight,
+                        onAddDrink = {
+                            if (uiState.queuedOrder != null) {
+                                onShowSnackbar("Cancel or send the queue first.")
+                            } else {
+                                onNavigateToOrderDialog(uiState.derived.player.id)
+                            }
+                        },
+                        onTimeout = { timeoutDialogPlayerId = uiState.derived.player.id },
+                        onCardClick = { onNavigateToPlayerDetail(uiState.derived.player.id) },
+                        onCancelOrder = { onCancelQueuedOrder(uiState.derived.player.id) },
+                    )
+                }
             }
         }
 

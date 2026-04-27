@@ -42,8 +42,15 @@ fun OverviewTab(viewModel: SessionViewModel) {
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
         if (uri != null) {
-            context.contentResolver.openInputStream(uri)?.let { stream ->
-                viewModel.importSession(stream)
+            try {
+                val stream = context.contentResolver.openInputStream(uri)
+                if (stream == null) {
+                    viewModel.reportError("Could not open the selected file.")
+                } else {
+                    viewModel.importSession(stream)
+                }
+            } catch (e: Exception) {
+                viewModel.reportError("Could not open the selected file.")
             }
         }
     }

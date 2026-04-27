@@ -227,9 +227,18 @@ App name, version from `BuildConfig.VERSION_NAME`, and short description.
 | `ui/about/AboutScreen.kt` | Replaces stub; `Scaffold`+`TopAppBar` (back arrow), centered scrollable `Column` with app name (`headlineLarge`), version string (`bodyLarge`), and short description (`bodyMedium`) |
 | `app/build.gradle.kts` | Added `buildConfig = true` to `buildFeatures` (required in AGP 8+ for `BuildConfig` class generation) |
 
-### ⬜ Phase 14 — Polish & Edge Cases
-Empty states, disabled-item visuals, timeout-countdown accuracy, file-picker error handling,
-final lint + test pass.
+### ✅ Phase 14 — Polish & Edge Cases
+
+Empty states, no-session guard back-exit, disabled-item visuals, and file-picker error handling.
+
+| New / Modified | Description |
+|---|---|
+| `ui/order/OrderTab.kt` | Empty state: centered icon (`People`) + instructional text when player list is empty |
+| `ui/session/players/PlayersTab.kt` | Empty state: `Person` icon + "No players yet." when list is empty; disabled alpha `0.38f` on `PlayerListItem` card |
+| `ui/session/drinks/DrinksTab.kt` | Empty state: `LocalBar` icon + "No drinks yet." when list is empty; disabled alpha `0.38f` on `DrinkListItem` card |
+| `ui/navigation/AppNavHost.kt` | `popOrFinish` helper using `findActivity()`; `NavDisplay.onBack` exits app when backstack ≤ 1; guard-mode `Session` entry passes `activity.finish()` as `onBack` |
+| `viewmodel/SessionViewModel.kt` | Added `reportError()` method; `importSession()` maps `SerializationException` → friendly message, rethrows `CancellationException`, generic fallback for other errors |
+| `ui/session/overview/OverviewTab.kt` | Import launcher wrapped in try/catch; null stream calls `viewModel.reportError(…)` |
 
 ---
 

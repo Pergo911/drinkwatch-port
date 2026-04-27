@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerializationException
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -159,10 +160,18 @@ class SessionViewModel(
                 withContext(Dispatchers.IO) {
                     sessionSerializer.import(inputStream)
                 }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: SerializationException) {
+                _uiError.value = "Import failed: invalid or corrupted file."
             } catch (e: Exception) {
-                _uiError.value = e.message ?: "Import failed"
+                _uiError.value = "Import failed."
             }
         }
+    }
+
+    fun reportError(message: String) {
+        _uiError.value = message
     }
 
     fun clearError() {
