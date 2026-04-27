@@ -19,9 +19,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.LocalDrink
-import androidx.compose.material.icons.filled.SportsBar
-import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.LocalBar
+import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -245,9 +245,9 @@ private fun DrinkPickerContent(
                 ) {
                     Icon(
                         imageVector = when (type) {
-                            DrinkType.SHOT          -> Icons.Filled.LocalDrink
-                            DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
-                            DrinkType.NON_ALCOHOLIC -> Icons.Filled.WaterDrop
+                            DrinkType.SHOT          -> Icons.Filled.LocalBar
+                            DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
+                            DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
                         },
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
@@ -271,9 +271,9 @@ private fun DrinkPickerContent(
                     leadingContent = {
                         Icon(
                             imageVector = when (drink.type) {
-                                DrinkType.SHOT          -> Icons.Filled.LocalDrink
-                                DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
-                                DrinkType.NON_ALCOHOLIC -> Icons.Filled.WaterDrop
+                                DrinkType.SHOT          -> Icons.Filled.LocalBar
+                                DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
+                                DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
                             },
                             contentDescription = null,
                             tint = if (drink.id == selectedDrinkId)

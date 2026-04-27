@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -240,7 +239,7 @@ fun PlayerDetailScreen(
                     StatCell(
                         label = "Glasses out",
                         value = state.unreturnedGlassCount.toString(),
-                        icon = Icons.Filled.WineBar,
+                        icon = Icons.Filled.LocalBar,
                         iconColor = MaterialTheme.colorScheme.tertiary,
                     )
                 }

@@ -19,9 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocalBar
-import androidx.compose.material.icons.filled.LocalDrink
-import androidx.compose.material.icons.filled.SportsBar
-import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -131,9 +130,9 @@ fun DrinksTab(viewModel: SessionViewModel) {
 }
 
 private fun drinkTypeIcon(type: DrinkType): ImageVector = when (type) {
-    DrinkType.SHOT          -> Icons.Filled.LocalDrink
-    DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
-    DrinkType.NON_ALCOHOLIC -> Icons.Filled.WaterDrop
+    DrinkType.SHOT          -> Icons.Filled.LocalBar
+    DrinkType.LONG_DRINK    -> Icons.Filled.WineBar
+    DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
 }
 
 @Composable

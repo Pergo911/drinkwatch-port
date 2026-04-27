@@ -17,8 +17,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocalBar
-import androidx.compose.material.icons.filled.LocalCafe
-import androidx.compose.material.icons.filled.WineBar
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,9 +59,9 @@ fun DrinkDialog(
     var showDeleteConfirm by rememberSaveable { mutableStateOf(false) }
 
     val drinkTypeOptions = listOf(
-        Triple(DrinkType.SHOT, "Shot", Icons.Filled.LocalBar),
-        Triple(DrinkType.LONG_DRINK, "Long drink", Icons.Filled.WineBar),
-        Triple(DrinkType.NON_ALCOHOLIC, "Non-alcoholic", Icons.Filled.LocalCafe),
+        DrinkType.SHOT          to "Shot",
+        DrinkType.LONG_DRINK    to "Long drink",
+        DrinkType.NON_ALCOHOLIC to "Non-alcoholic",
     )
 
     Dialog(
@@ -121,23 +119,11 @@ fun DrinkDialog(
                 )
                 Text("Type", style = MaterialTheme.typography.labelLarge)
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                    drinkTypeOptions.forEachIndexed { index, (type, label, icon) ->
+                    drinkTypeOptions.forEachIndexed { index, (type, label) ->
                         SegmentedButton(
                             selected = selectedType == type,
                             onClick = { selectedType = type },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = drinkTypeOptions.size,
-                            ),
-                            icon = {
-                                SegmentedButtonDefaults.Icon(active = selectedType == type) {
-                                    Icon(
-                                        imageVector = icon,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp),
-                                    )
-                                }
-                            },
+                            shape = SegmentedButtonDefaults.itemShape(index, drinkTypeOptions.size),
                         ) { Text(label) }
                     }
                 }
