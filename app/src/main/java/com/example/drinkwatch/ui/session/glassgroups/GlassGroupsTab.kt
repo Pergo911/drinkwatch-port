@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,7 +26,7 @@ fun GlassGroupsTab(viewModel: SessionViewModel) {
     val letters = ('A'..'Z').toList()
 
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(72.dp),
+        columns = GridCells.Adaptive(100.dp),
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
@@ -34,7 +37,10 @@ fun GlassGroupsTab(viewModel: SessionViewModel) {
             FilterChip(
                 selected = letter in activeLetters,
                 onClick = { viewModel.toggleGlassGroup(letter) },
-                label = { Text(letter.toString()) },
+                label = { Text("Group $letter") },
+                leadingIcon = if (letter in activeLetters) {
+                    { Icon(Icons.Filled.Check, contentDescription = null) }
+                } else null,
                 modifier = Modifier.fillMaxWidth(),
             )
         }

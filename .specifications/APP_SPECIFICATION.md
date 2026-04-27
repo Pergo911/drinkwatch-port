@@ -62,38 +62,44 @@ Allows the user to record orders in batches. When adding an order, the default b
 
 ## Main screen
 
-Default screen shown on app launch, bottom of the stack. Tabbed layout with a top bar. Orders, timeouts and glasses are managed from here. Tabs are managed through a bottom navigation bar. Automatically opens the "Session" screen if no session is loaded.
+Default screen shown on app launch, bottom of the stack. Tabbed layout with a top bar. Orders, timeouts and glasses are managed from here. Tabs are managed through a bottom navigation bar.
 
 ### App bar
 
-Top bar with a title (the session name) and hamburger menu. Hamburger menu items: "Session", "Settings", "About".
+Top bar with a title (the session name). A gear icon on the right opens the Settings screen.
 
-### Tab 1: Order
+### Tab 1: Session
 
-Default tab. Displays the list of players.
+Session management tab. Contains the same sub-tab layout as the former standalone Session screen (Overview, Players, Drinks, Glass Groups secondary tabs).
+
+Default tab when no session is loaded. When no session is loaded, the Order and Glasses tabs are disabled.
+
+### Tab 2: Order
+
+Default tab when a session is loaded. Displays the list of players.
 
 The player card displays a players name and active drink count if not under a timeout, else the time left. Two actions buttons are available: "Add Drink", "Timeout". Tapping the card anywhere else opens the player's detail screen.
 
 "Add drink": Opens "Order" full-screen dialog.
 "Timeout": Opens simple duration picker dialog.
 
-### Tab 2: Glasses
+### Tab 3: Glasses
 
 Displays the list of glasses currently taken.
 
 Card displays glass group and number (e.g. "B10"), the drink and the player. Tapping the card returns the glass after a confirmation dialog.
 
-## Session
+## Session (tab)
 
-The session manager screen. Tabbed layout (secondary tabs).
+The session manager tab embedded in the main screen. Tabbed layout (secondary tabs).
 
-### Tab 1: Overview
+### Sub-tab 1: Overview
 
 If no session is loaded: An empty screen with two options in the middle: "Import From File", "Create New".
 
 Otherwise: Allows editing the session name, exporting and importing to file, and starting a new session.
 
-### Tab 2 - 4: Players, Drinks, Glasses
+### Sub-tabs 2 - 4: Players, Drinks, Glasses
 
 These tabs are unavailable if no session is loaded.
 
@@ -123,7 +129,3 @@ The confirm button is split, the default option queues the order, the secondary 
 - Dark theme / light theme / system theme
 - Active drink highlight (int): The active drink counter will be highlighted red for players with active drinks greater or equal to this number.
 - Default timeout duration
-
-## About
-
-- App version

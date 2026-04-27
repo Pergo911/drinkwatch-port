@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Liquor
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -63,7 +65,7 @@ fun PlayerCard(
             verticalAlignment = Alignment.Top,
         ) {
             // ── Avatar ──────────────────────────────────────────────────────
-            PlayerAvatar(name = player.name)
+            PlayerAvatar()
 
             Spacer(Modifier.width(12.dp))
 
@@ -76,7 +78,7 @@ fun PlayerCard(
                 ) {
                     Text(
                         text = player.name,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.weight(1f, fill = false),
                     )
                     Spacer(Modifier.width(8.dp))
@@ -114,10 +116,17 @@ fun PlayerCard(
                             SuggestionChip(
                                 onClick = {},
                                 label = {
-                                    Text(
-                                        "${derived.activeDrinkCount} 🍹",
-                                        fontWeight = FontWeight.SemiBold,
-                                    )
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Icon(
+                                            Icons.Filled.Liquor,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(ButtonDefaults.IconSize),
+                                        )
+                                        Text(
+                                            "${derived.activeDrinkCount}",
+                                            fontWeight = FontWeight.SemiBold,
+                                        )
+                                    }
                                 },
                                 colors = SuggestionChipDefaults.suggestionChipColors(
                                     containerColor = if (drinkHighlight)
@@ -147,19 +156,10 @@ fun PlayerCard(
                             onCancel   = onCancelOrder,
                         )
                     } else {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(
-                                onClick = onAddDrink,
-                                enabled = !isTimeout,
-                            ) {
-                                Icon(
-                                    Icons.Filled.AddCircle,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                                )
-                                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                                Text("Add Drink")
-                            }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                        ) {
                             OutlinedButton(onClick = onTimeout) {
                                 Icon(
                                     Icons.Filled.Timer,
@@ -168,6 +168,18 @@ fun PlayerCard(
                                 )
                                 Spacer(Modifier.width(ButtonDefaults.IconSpacing))
                                 Text("Timeout")
+                            }
+                            Button(
+                                onClick = onAddDrink,
+                                enabled = !isTimeout,
+                            ) {
+                                Icon(
+                                    Icons.Filled.Add,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                                )
+                                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                                Text("Drink")
                             }
                         }
                     }
@@ -185,10 +197,8 @@ fun PlayerCard(
 
 @Composable
 fun PlayerAvatar(
-    name: String,
     modifier: Modifier = Modifier,
 ) {
-    val initial = name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -196,11 +206,11 @@ fun PlayerAvatar(
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
-        Text(
-            text = initial,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontWeight = FontWeight.Bold,
+        Icon(
+            imageVector = Icons.Filled.Person,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.size(26.dp),
         )
     }
 }

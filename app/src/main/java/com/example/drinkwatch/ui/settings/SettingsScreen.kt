@@ -42,6 +42,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.drinkwatch.BuildConfig
 import com.example.drinkwatch.DrinkWatchApplication
 import com.example.drinkwatch.data.model.Theme
 import com.example.drinkwatch.ui.component.DurationPicker
@@ -128,7 +129,14 @@ fun SettingsScreen(onBack: () -> Unit) {
                 onSecondsChange = { viewModel.setDefaultTimeoutSeconds(it) },
                 modifier = Modifier.fillMaxWidth(),
             )
-        }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            Text(
+                text = "v${BuildConfig.VERSION_NAME}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            )}
     }
 }
 

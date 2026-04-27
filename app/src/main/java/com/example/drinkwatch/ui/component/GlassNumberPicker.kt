@@ -12,7 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -25,11 +28,15 @@ fun GlassNumberPicker(
     selectedNumber: Int,
     takenNumbers: Set<Int>,
     onNumberChange: (Int) -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val errorColor = MaterialTheme.colorScheme.error
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier.alpha(if (enabled) 1f else 0.38f),
+        contentAlignment = Alignment.Center,
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -58,6 +65,20 @@ fun GlassNumberPicker(
                         textAlign = TextAlign.Center,
                     )
                 },
+            )
+        }
+        if (!enabled) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                awaitPointerEvent(PointerEventPass.Initial)
+                                    .changes.forEach { it.consume() }
+                            }
+                        }
+                    },
             )
         }
     }
