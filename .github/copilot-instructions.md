@@ -1,5 +1,7 @@
 # DrinkWatch – Copilot Instructions
 
+Always load skills configured in the repository before processing any requests.
+
 ## Development roadmap
 
 - The original project specification is at @.specifications/APP_SPECIFICATION.md

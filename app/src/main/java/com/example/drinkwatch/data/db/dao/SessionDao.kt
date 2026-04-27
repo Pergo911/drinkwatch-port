@@ -23,4 +23,7 @@ interface SessionDao {
 
     @Query("DELETE FROM sessions")
     suspend fun deleteAll()
+
+    @Query("SELECT COUNT(*) > 0 FROM sessions")
+    suspend fun exists(): Boolean
 }

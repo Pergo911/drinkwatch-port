@@ -4,13 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.drinkwatch.data.model.AppSettings
+import com.example.drinkwatch.data.model.Theme
+import com.example.drinkwatch.ui.navigation.AppNavHost
 import com.example.drinkwatch.ui.theme.DrinkWatchTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,30 +17,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DrinkWatchTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            val app = application as DrinkWatchApplication
+            val settings by app.settingsRepository.settings
+                .collectAsStateWithLifecycle(initialValue = AppSettings())
+            val darkTheme = when (settings.theme) {
+                Theme.LIGHT  -> false
+                Theme.DARK   -> true
+                Theme.SYSTEM -> isSystemInDarkTheme()
+            }
+            DrinkWatchTheme(darkTheme = darkTheme) {
+                AppNavHost()
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DrinkWatchTheme {
-        Greeting("Android")
     }
 }

@@ -9,13 +9,13 @@ interface EventDao {
     @Insert
     suspend fun insert(event: EventEntity): Long
 
-    @Query("SELECT * FROM events WHERE sessionId = :sessionId ORDER BY timestampMs ASC")
+    @Query("SELECT * FROM events WHERE sessionId = :sessionId ORDER BY timestampMs ASC, id ASC")
     fun getBySession(sessionId: Long): Flow<List<EventEntity>>
 
     @Query("""
         SELECT * FROM events
         WHERE sessionId = :sessionId AND playerId = :playerId
-        ORDER BY timestampMs ASC
+        ORDER BY timestampMs ASC, id ASC
     """)
     fun getByPlayer(sessionId: Long, playerId: Long): Flow<List<EventEntity>>
 
@@ -58,6 +58,7 @@ interface EventDao {
             AND e.glassNumber = o.glassNumber
             AND e.sessionId = :sessionId
         )
+        ORDER BY o.timestampMs ASC, o.id ASC
     """)
     fun getTakenGlasses(sessionId: Long): Flow<List<EventEntity>>
 
