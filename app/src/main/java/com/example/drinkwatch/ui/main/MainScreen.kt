@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,7 +34,7 @@ fun MainScreen(
     onNavigateToOrderDialog: (Long) -> Unit,
 ) {
     val app = LocalContext.current.applicationContext as DrinkWatchApplication
-    val activity = LocalContext.current as ComponentActivity
+    val activity = LocalActivity.current as ComponentActivity
     val viewModel: MainViewModel = viewModel(
         viewModelStoreOwner = activity,
         factory = app.mainViewModelFactory,
