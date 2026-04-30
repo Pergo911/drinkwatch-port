@@ -278,7 +278,6 @@ private fun DrinkPickerContent(
                         modifier = Modifier.size(48.dp),
                         tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     )
-                    Spacer(Modifier.width(0.dp))
                     Text(
                         text = "No drinks match \"$searchQuery\"",
                         style = MaterialTheme.typography.bodyMedium,
