@@ -42,6 +42,7 @@ fun MainScreen(
 
     val sessionName           by viewModel.sessionName.collectAsStateWithLifecycle()
     val sessionId             by viewModel.sessionId.collectAsStateWithLifecycle()
+    val sessionReady          by viewModel.sessionReady.collectAsStateWithLifecycle()
     val takenGlasses          by viewModel.takenGlasses.collectAsStateWithLifecycle()
     val playerUiStates        by viewModel.playerUiStates.collectAsStateWithLifecycle()
     val activeDrinkHighlight  by viewModel.activeDrinkHighlight.collectAsStateWithLifecycle()
@@ -50,10 +51,12 @@ fun MainScreen(
 
     val hasSession = sessionId != null
 
-    // Default to SESSION when there is no active session, ORDER when one exists.
-    // Key by sessionId so the tab resets whenever the session is replaced.
-    var selectedTab by rememberSaveable(sessionId, stateSaver = MainTabSaver) {
-        mutableStateOf(if (hasSession) MainTab.ORDER else MainTab.SESSION)
+    // Default to ORDER.  Only switch to SESSION once we know (sessionReady) that there is
+    // no active session.  Keyed by both sessionId and sessionReady so the state reinitialises
+    // correctly: when the session is loaded we already hold the real values and pick the right
+    // tab without a visible jerk.
+    var selectedTab by rememberSaveable(sessionId, sessionReady, stateSaver = MainTabSaver) {
+        mutableStateOf(if (sessionReady && !hasSession) MainTab.SESSION else MainTab.ORDER)
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
