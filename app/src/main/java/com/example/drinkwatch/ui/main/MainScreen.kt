@@ -41,22 +41,23 @@ fun MainScreen(
     )
 
     val sessionName           by viewModel.sessionName.collectAsStateWithLifecycle()
-    val sessionId             by viewModel.sessionId.collectAsStateWithLifecycle()
-    val sessionReady          by viewModel.sessionReady.collectAsStateWithLifecycle()
+    val sessionLoadState      by viewModel.sessionLoadState.collectAsStateWithLifecycle()
     val takenGlasses          by viewModel.takenGlasses.collectAsStateWithLifecycle()
     val playerUiStates        by viewModel.playerUiStates.collectAsStateWithLifecycle()
     val activeDrinkHighlight  by viewModel.activeDrinkHighlight.collectAsStateWithLifecycle()
     val defaultTimeoutSeconds by viewModel.defaultTimeoutSeconds.collectAsStateWithLifecycle()
     val queue                 by viewModel.queue.collectAsStateWithLifecycle()
 
-    val hasSession = sessionId != null
+    // Derive hasSession from the single sessionLoadState so that "ready?" and "session exists?"
+    // always reflect the same upstream emission and can never be observed out of sync.
+    val hasSession = (sessionLoadState as? MainViewModel.SessionLoadState.Loaded)?.sessionId != null
 
-    // Default to ORDER.  Only switch to SESSION once we know (sessionReady) that there is
-    // no active session.  Keyed by both sessionId and sessionReady so the state reinitialises
-    // correctly: when the session is loaded we already hold the real values and pick the right
-    // tab without a visible jerk.
-    var selectedTab by rememberSaveable(sessionId, sessionReady, stateSaver = MainTabSaver) {
-        mutableStateOf(if (sessionReady && !hasSession) MainTab.SESSION else MainTab.ORDER)
+    // Default to ORDER.  Only switch to SESSION once sessionLoadState is Loaded *and* there is
+    // no active session.  Keyed by sessionLoadState so the state reinitialises correctly when
+    // the session changes — both conditions come from the same atomic value, preventing jerk.
+    var selectedTab by rememberSaveable(sessionLoadState, stateSaver = MainTabSaver) {
+        val loaded = sessionLoadState as? MainViewModel.SessionLoadState.Loaded
+        mutableStateOf(if (loaded != null && loaded.sessionId == null) MainTab.SESSION else MainTab.ORDER)
     }
 
     val snackbarHostState = remember { SnackbarHostState() }

@@ -89,16 +89,20 @@ class MainViewModel(
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     /**
-     * Becomes `true` after the session repository has emitted at least once, meaning we now
-     * know whether an active session exists (even if the answer is "none").  The mapped value
-     * is always `true` because we only care that *an* emission happened, not what it contained.
-     * Used in the UI to avoid initialising the selected tab before the real session state is
-     * available (which would cause a visible jerk).
+     * Single source of truth for session-load status used to drive tab initialisation in the UI.
+     * Starts as [Loading] and transitions to [Loaded] (with a nullable session id) the moment
+     * [_currentSession] emits for the first time.  Both fields are always derived from the same
+     * upstream emission so they can never be observed out of sync.
      */
-    val sessionReady: StateFlow<Boolean> =
-        sessionRepository.observeCurrentSession()
-            .map { true }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    sealed interface SessionLoadState {
+        data object Loading : SessionLoadState
+        data class Loaded(val sessionId: Long?) : SessionLoadState
+    }
+
+    val sessionLoadState: StateFlow<SessionLoadState> =
+        _currentSession
+            .map { SessionLoadState.Loaded(it?.id) }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, SessionLoadState.Loading)
 
     val playerUiStates: StateFlow<List<PlayerUiState>> =
         _currentSession.flatMapLatest { session ->
