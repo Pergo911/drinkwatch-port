@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,10 +14,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,6 +49,14 @@ fun OrderTab(
     modifier: Modifier = Modifier,
 ) {
     var timeoutDialogPlayerId by remember { mutableStateOf<Long?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    val filteredPlayers = remember(playerUiStates, searchQuery) {
+        if (searchQuery.isBlank()) playerUiStates
+        else playerUiStates.filter {
+            it.derived.player.name.contains(searchQuery, ignoreCase = true)
+        }
+    }
 
     Box(modifier = modifier) {
         if (playerUiStates.isEmpty()) {
@@ -72,31 +85,82 @@ fun OrderTab(
                 )
             }
         } else {
-            LazyColumn(
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 8.dp,
-                    bottom = if (queueSize > 0) 88.dp else 8.dp,
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                items(playerUiStates, key = { it.derived.player.id }) { uiState ->
-                    PlayerCard(
-                        playerUiState = uiState,
-                        activeDrinkHighlight = activeDrinkHighlight,
-                        onAddDrink = {
-                            if (uiState.queuedOrder != null) {
-                                onShowSnackbar("Cancel or send the queue first.")
-                            } else {
-                                onNavigateToOrderDialog(uiState.derived.player.id)
+            Column(modifier = Modifier.fillMaxSize()) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Search players…") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    },
+                    trailingIcon = if (searchQuery.isNotEmpty()) {
+                        {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Clear,
+                                    contentDescription = "Clear search",
+                                )
                             }
-                        },
-                        onTimeout = { timeoutDialogPlayerId = uiState.derived.player.id },
-                        onCardClick = { onNavigateToPlayerDetail(uiState.derived.player.id) },
-                        onCancelOrder = { onCancelQueuedOrder(uiState.derived.player.id) },
-                    )
+                        }
+                    } else null,
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                )
+                if (filteredPlayers.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 80.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            text = "No players match \"$searchQuery\"",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 4.dp,
+                            bottom = if (queueSize > 0) 88.dp else 8.dp,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        items(filteredPlayers, key = { it.derived.player.id }) { uiState ->
+                            PlayerCard(
+                                playerUiState = uiState,
+                                activeDrinkHighlight = activeDrinkHighlight,
+                                onAddDrink = {
+                                    if (uiState.queuedOrder != null) {
+                                        onShowSnackbar("Cancel or send the queue first.")
+                                    } else {
+                                        onNavigateToOrderDialog(uiState.derived.player.id)
+                                    }
+                                },
+                                onTimeout = { timeoutDialogPlayerId = uiState.derived.player.id },
+                                onCardClick = { onNavigateToPlayerDetail(uiState.derived.player.id) },
+                                onCancelOrder = { onCancelQueuedOrder(uiState.derived.player.id) },
+                            )
+                        }
+                    }
                 }
             }
         }

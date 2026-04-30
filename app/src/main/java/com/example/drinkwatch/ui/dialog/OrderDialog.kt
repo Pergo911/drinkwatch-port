@@ -19,8 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocalDrink
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -229,77 +232,131 @@ private fun DrinkPickerContent(
         return
     }
 
-    val typeOrder = listOf(DrinkType.SHOT, DrinkType.LONG_DRINK, DrinkType.NON_ALCOHOLIC)
-    val grouped = remember(drinks) { drinks.groupBy { it.type } }
+    var searchQuery by remember { mutableStateOf("") }
 
-    LazyColumn(
-        contentPadding = PaddingValues(bottom = 8.dp),
-        modifier = modifier,
-    ) {
-        typeOrder.forEach { type ->
-            val typeItems = grouped[type] ?: return@forEach
-            item(key = "header_$type") {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
+    val typeOrder = listOf(DrinkType.SHOT, DrinkType.LONG_DRINK, DrinkType.NON_ALCOHOLIC)
+    val filteredDrinks = remember(drinks, searchQuery) {
+        if (searchQuery.isBlank()) drinks
+        else drinks.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    }
+    val grouped = remember(filteredDrinks) { filteredDrinks.groupBy { it.type } }
+
+    Column(modifier = modifier) {
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            placeholder = { Text("Search drinks…") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            },
+            trailingIcon = if (searchQuery.isNotEmpty()) {
+                {
+                    IconButton(onClick = { searchQuery = "" }) {
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = "Clear search",
+                        )
+                    }
+                }
+            } else null,
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        )
+
+        if (filteredDrinks.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
-                        imageVector = when (type) {
-                            DrinkType.SHOT          -> Icons.Filled.LocalDrink
-                            DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
-                            DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
-                        },
+                        imageVector = Icons.Filled.Search,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     )
-                    Spacer(Modifier.width(6.dp))
                     Text(
-                        text = when (type) {
-                            DrinkType.SHOT          -> "Shots"
-                            DrinkType.LONG_DRINK    -> "Long Drinks"
-                            DrinkType.NON_ALCOHOLIC -> "Non-Alcoholic"
-                        },
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.secondary,
+                        text = "No drinks match \"$searchQuery\"",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 12.dp),
                     )
                 }
             }
-            items(typeItems, key = { it.id }) { drink ->
-                ListItem(
-                    headlineContent = { Text(drink.name) },
-                    leadingContent = {
-                        Icon(
-                            imageVector = when (drink.type) {
-                                DrinkType.SHOT          -> Icons.Filled.LocalDrink
-                                DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
-                                DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
-                            },
-                            contentDescription = null,
-                            tint = if (drink.id == selectedDrinkId)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
-                    trailingContent = if (drink.id == selectedDrinkId) {
-                        {
+        } else {
+            LazyColumn(
+                contentPadding = PaddingValues(bottom = 8.dp),
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                typeOrder.forEach { type ->
+                    val typeItems = grouped[type] ?: return@forEach
+                    item(key = "header_$type") {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        ) {
                             Icon(
-                                Icons.Filled.Check,
+                                imageVector = when (type) {
+                                    DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                                    DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
+                                    DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
+                                },
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(16.dp),
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(
+                                text = when (type) {
+                                    DrinkType.SHOT          -> "Shots"
+                                    DrinkType.LONG_DRINK    -> "Long Drinks"
+                                    DrinkType.NON_ALCOHOLIC -> "Non-Alcoholic"
+                                },
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.secondary,
                             )
                         }
-                    } else null,
-                    modifier = Modifier
-                        .alpha(if (drink.isDisabled) 0.38f else 1f)
-                        .then(
-                            if (!drink.isDisabled)
-                                Modifier.clickable { onSelectDrink(drink.id) }
-                            else
-                                Modifier,
-                        ),
-                )
+                    }
+                    items(typeItems, key = { it.id }) { drink ->
+                        ListItem(
+                            headlineContent = { Text(drink.name) },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = when (drink.type) {
+                                        DrinkType.SHOT          -> Icons.Filled.LocalDrink
+                                        DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
+                                        DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
+                                    },
+                                    contentDescription = null,
+                                    tint = if (drink.id == selectedDrinkId)
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
+                            trailingContent = if (drink.id == selectedDrinkId) {
+                                {
+                                    Icon(
+                                        Icons.Filled.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                            } else null,
+                            modifier = Modifier
+                                .alpha(if (drink.isDisabled) 0.38f else 1f)
+                                .then(
+                                    if (!drink.isDisabled)
+                                        Modifier.clickable { onSelectDrink(drink.id) }
+                                    else
+                                        Modifier,
+                                ),
+                        )
+                    }
+                }
             }
         }
     }
