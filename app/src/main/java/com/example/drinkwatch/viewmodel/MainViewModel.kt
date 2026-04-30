@@ -88,6 +88,18 @@ class MainViewModel(
             .map { it?.id }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
+    /**
+     * Becomes `true` after the session repository has emitted at least once, meaning we now
+     * know whether an active session exists (even if the answer is "none").  The mapped value
+     * is always `true` because we only care that *an* emission happened, not what it contained.
+     * Used in the UI to avoid initialising the selected tab before the real session state is
+     * available (which would cause a visible jerk).
+     */
+    val sessionReady: StateFlow<Boolean> =
+        sessionRepository.observeCurrentSession()
+            .map { true }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
     val playerUiStates: StateFlow<List<PlayerUiState>> =
         _currentSession.flatMapLatest { session ->
             if (session == null) return@flatMapLatest flowOf(emptyList())
