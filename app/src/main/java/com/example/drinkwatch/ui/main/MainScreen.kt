@@ -102,8 +102,8 @@ fun MainScreen(
             contentAlignment = Alignment.TopStart,
             transitionSpec = {
                 val direction = if (targetState.ordinal > initialState.ordinal) 1 else -1
-                slideInHorizontally(tween(250)) { it * direction } + fadeIn(tween(250)) togetherWith
-                    slideOutHorizontally(tween(150)) { -it * direction } + fadeOut(tween(150))
+                slideInHorizontally(tween(250)) { it * direction / 6 } + fadeIn(tween(250)) togetherWith
+                    slideOutHorizontally(tween(150)) { -it * direction / 6 } + fadeOut(tween(150))
             },
             label = "MainTabContent",
             modifier = Modifier

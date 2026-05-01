@@ -1,5 +1,11 @@
 package com.example.drinkwatch.ui.session.drinks
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,8 +39,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +52,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +66,20 @@ fun DrinkDialog(
     var name by rememberSaveable { mutableStateOf(drink?.name ?: "") }
     var selectedType by rememberSaveable { mutableStateOf(drink?.type ?: DrinkType.LONG_DRINK) }
     var showDeleteConfirm by rememberSaveable { mutableStateOf(false) }
+    var visible by remember { mutableStateOf(true) }
+    var dismissing by remember { mutableStateOf(false) }
+
+    fun animatedDismiss() {
+        if (!dismissing) dismissing = true
+    }
+
+    LaunchedEffect(dismissing) {
+        if (dismissing) {
+            visible = false
+            delay(300)
+            onDismiss()
+        }
+    }
 
     val drinkTypeOptions = listOf(
         DrinkType.SHOT          to "Shot",
@@ -65,9 +88,14 @@ fun DrinkDialog(
     )
 
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = ::animatedDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
+        AnimatedVisibility(
+            visible = visible,
+            enter = slideInVertically(tween(300)) { it } + fadeIn(tween(200)),
+            exit = slideOutVertically(tween(250)) { it } + fadeOut(tween(200)),
+        ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -85,7 +113,7 @@ fun DrinkDialog(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onDismiss) {
+                        IconButton(onClick = ::animatedDismiss) {
                             Icon(Icons.Filled.Close, contentDescription = "Cancel")
                         }
                     },
@@ -134,7 +162,7 @@ fun DrinkDialog(
                         OutlinedButton(
                             onClick = {
                                 onToggleDisabled()
-                                onDismiss()
+                                animatedDismiss()
                             },
                             modifier = Modifier.fillMaxWidth(),
                         ) {
@@ -146,7 +174,7 @@ fun DrinkDialog(
                         OutlinedButton(
                             onClick = {
                                 onToggleDisabled()
-                                onDismiss()
+                                animatedDismiss()
                             },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -172,6 +200,7 @@ fun DrinkDialog(
                 }
             }
         }
+        } // AnimatedVisibility
     }
 
     if (showDeleteConfirm) {
