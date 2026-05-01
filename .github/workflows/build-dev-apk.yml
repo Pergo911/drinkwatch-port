@@ -2,7 +2,7 @@ name: Build Debug APK
 
 on:
   push:
-    branches: [dev, copilot/dev]
+    branches: ["*dev*"]
 
 jobs:
   build:
