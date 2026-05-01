@@ -1,6 +1,9 @@
 package com.example.drinkwatch.ui.session
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dataset
 import androidx.compose.material.icons.filled.Liquor
@@ -8,15 +11,13 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +28,7 @@ import com.example.drinkwatch.ui.session.glassgroups.GlassGroupsTab
 import com.example.drinkwatch.ui.session.overview.OverviewTab
 import com.example.drinkwatch.ui.session.players.PlayersTab
 import com.example.drinkwatch.viewmodel.SessionViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,14 +57,19 @@ fun SessionTab(
         Icons.Filled.Liquor,
         Icons.Filled.LocalBar,
     )
-    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState(pageCount = { 4 })
+    val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = modifier) {
-        SecondaryTabRow(selectedTabIndex = selectedTab) {
+        PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
+                    selected = pagerState.currentPage == index,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
                     enabled = index == 0 || session != null,
                     text = { Text(title) },
                     icon = {
@@ -74,11 +81,17 @@ fun SessionTab(
                 )
             }
         }
-        when (selectedTab) {
-            0 -> OverviewTab(viewModel = viewModel)
-            1 -> if (session != null) PlayersTab(viewModel = viewModel)
-            2 -> if (session != null) DrinksTab(viewModel = viewModel)
-            3 -> if (session != null) GlassGroupsTab(viewModel = viewModel)
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize(),
+            userScrollEnabled = true,
+        ) { page ->
+            when (page) {
+                0 -> OverviewTab(viewModel = viewModel)
+                1 -> if (session != null) PlayersTab(viewModel = viewModel)
+                2 -> if (session != null) DrinksTab(viewModel = viewModel)
+                3 -> if (session != null) GlassGroupsTab(viewModel = viewModel)
+            }
         }
     }
 }
