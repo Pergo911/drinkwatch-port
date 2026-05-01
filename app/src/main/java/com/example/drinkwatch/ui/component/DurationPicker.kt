@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -120,6 +121,7 @@ internal fun WheelPicker(
         initialFirstVisibleItemIndex = initialIndex.coerceIn(0, items.lastIndex),
     )
     val flingBehavior = rememberSnapFlingBehavior(listState)
+    val halfItemHeightPx = with(LocalDensity.current) { ItemHeight.toPx() / 2f }
     // Pad with one empty slot on each end so items[0] and items[last]
     // can scroll to the center position. firstVisibleItemIndex then maps
     // directly to items[firstVisibleItemIndex].
@@ -154,7 +156,15 @@ internal fun WheelPicker(
                 // actually changes (prev center → not, new center → yes) recompose
                 // when firstVisibleItemIndex updates.
                 val isCenter by remember {
-                    derivedStateOf { paddedIndex == listState.firstVisibleItemIndex + 1 }
+                    derivedStateOf {
+                        val centerIndex =
+                            if (listState.firstVisibleItemScrollOffset >= halfItemHeightPx) {
+                                listState.firstVisibleItemIndex + 2
+                            } else {
+                                listState.firstVisibleItemIndex + 1
+                            }
+                        paddedIndex == centerIndex
+                    }
                 }
                 Box(
                     contentAlignment = Alignment.Center,
