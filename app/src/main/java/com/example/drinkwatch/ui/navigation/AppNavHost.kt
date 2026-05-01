@@ -1,5 +1,11 @@
 package com.example.drinkwatch.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -46,6 +52,18 @@ fun AppNavHost() {
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(),
             ),
+            transitionSpec = {
+                slideInHorizontally(tween(350)) { it } + fadeIn(tween(350)) togetherWith
+                    slideOutHorizontally(tween(150)) { -it / 4 } + fadeOut(tween(150))
+            },
+            popTransitionSpec = {
+                slideInHorizontally(tween(350)) { -it / 4 } + fadeIn(tween(350)) togetherWith
+                    slideOutHorizontally(tween(150)) { it } + fadeOut(tween(150))
+            },
+            predictivePopTransitionSpec = {
+                slideInHorizontally(tween(350)) { -it / 4 } + fadeIn(tween(350)) togetherWith
+                    slideOutHorizontally(tween(150)) { it } + fadeOut(tween(150))
+            },
             entryProvider = entryProvider {
 
                 entry<Main> {

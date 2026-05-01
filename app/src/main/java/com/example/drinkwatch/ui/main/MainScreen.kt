@@ -2,6 +2,13 @@ package com.example.drinkwatch.ui.main
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -15,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -89,42 +97,50 @@ fun MainScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
-        when (selectedTab) {
-            MainTab.SESSION ->
-                SessionTab(
-                    onShowSnackbar = { msg ->
-                        coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
-            MainTab.ORDER ->
-                OrderTab(
-                    playerUiStates = playerUiStates,
-                    activeDrinkHighlight = activeDrinkHighlight,
-                    defaultTimeoutSeconds = defaultTimeoutSeconds,
-                    onNavigateToOrderDialog = onNavigateToOrderDialog,
-                    onNavigateToPlayerDetail = onNavigateToPlayerDetail,
-                    onStartTimeout = viewModel::startTimeout,
-                    onCancelQueuedOrder = viewModel::cancelQueuedOrder,
-                    onCommitQueue = viewModel::commitQueue,
-                    queueSize = queue.size,
-                    onShowSnackbar = { msg ->
-                        coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
-            MainTab.GLASSES ->
-                GlassesTab(
-                    takenGlasses = takenGlasses,
-                    onReturnGlass = viewModel::returnGlass,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
+        AnimatedContent(
+            targetState = selectedTab,
+            contentAlignment = Alignment.TopStart,
+            transitionSpec = {
+                val direction = if (targetState.ordinal > initialState.ordinal) 1 else -1
+                slideInHorizontally(tween(250)) { it * direction } + fadeIn(tween(250)) togetherWith
+                    slideOutHorizontally(tween(150)) { -it * direction } + fadeOut(tween(150))
+            },
+            label = "MainTabContent",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) { tab ->
+            when (tab) {
+                MainTab.SESSION ->
+                    SessionTab(
+                        onShowSnackbar = { msg ->
+                            coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                MainTab.ORDER ->
+                    OrderTab(
+                        playerUiStates = playerUiStates,
+                        activeDrinkHighlight = activeDrinkHighlight,
+                        defaultTimeoutSeconds = defaultTimeoutSeconds,
+                        onNavigateToOrderDialog = onNavigateToOrderDialog,
+                        onNavigateToPlayerDetail = onNavigateToPlayerDetail,
+                        onStartTimeout = viewModel::startTimeout,
+                        onCancelQueuedOrder = viewModel::cancelQueuedOrder,
+                        onCommitQueue = viewModel::commitQueue,
+                        queueSize = queue.size,
+                        onShowSnackbar = { msg ->
+                            coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                MainTab.GLASSES ->
+                    GlassesTab(
+                        takenGlasses = takenGlasses,
+                        onReturnGlass = viewModel::returnGlass,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+            }
         }
     }
 }

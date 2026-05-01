@@ -1,6 +1,12 @@
 package com.example.drinkwatch.ui.dialog
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +43,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -57,6 +64,7 @@ import com.example.drinkwatch.ui.component.GlassNumberPicker
 import com.example.drinkwatch.util.findActivity
 import com.example.drinkwatch.viewmodel.MainViewModel
 import com.example.drinkwatch.viewmodel.SessionViewModel
+import kotlinx.coroutines.delay
 
 private enum class Step { DRINK, GLASS }
 
@@ -87,7 +95,22 @@ fun OrderDialogContent(
     var selectedGlassGroup by remember { mutableStateOf<Char?>(null) }
     var selectedGlassNumber by remember { mutableIntStateOf(1) }
 
-    // System back: Step 2 → Step 1; Step 1 → dismiss (handled by Nav3 default).
+    // Animate in on entry; animate out before dismissing.
+    var visible by remember { mutableStateOf(false) }
+    var dismissing by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
+    LaunchedEffect(dismissing) {
+        if (dismissing) {
+            visible = false
+            delay(300)
+            onDismiss()
+        }
+    }
+    val animatedDismiss: () -> Unit = { if (!dismissing) dismissing = true }
+
+    // Lower-priority fallback: dismiss dialog with animation when back is pressed on Step 1.
+    BackHandler { animatedDismiss() }
+    // Higher-priority: back on Step 2 returns to Step 1.
     BackHandler(enabled = step == Step.GLASS) {
         step = Step.DRINK
     }
@@ -112,6 +135,11 @@ fun OrderDialogContent(
 
     // ── Layout ────────────────────────────────────────────────────────────────
 
+    AnimatedVisibility(
+        visible = visible,
+        enter = slideInVertically(tween(300)) { it } + fadeIn(tween(200)),
+        exit = slideOutVertically(tween(250)) { it } + fadeOut(tween(200)),
+    ) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -120,7 +148,7 @@ fun OrderDialogContent(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        if (step == Step.GLASS) step = Step.DRINK else onDismiss()
+                        if (step == Step.GLASS) step = Step.DRINK else animatedDismiss()
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -156,7 +184,7 @@ fun OrderDialogContent(
                                     selectedGlassGroup,
                                     if (selectedGlassGroup != null) selectedGlassNumber else null,
                                 )
-                                onDismiss()
+                                animatedDismiss()
                             },
                             enabled = canConfirm,
                             modifier = Modifier.weight(1f),
@@ -169,7 +197,7 @@ fun OrderDialogContent(
                                     selectedGlassGroup,
                                     if (selectedGlassGroup != null) selectedGlassNumber else null,
                                 )
-                                onDismiss()
+                                animatedDismiss()
                             },
                             enabled = canConfirm,
                         ) { Text("Confirm Now") }
@@ -214,6 +242,7 @@ fun OrderDialogContent(
                 )
         }
     }
+    } // AnimatedVisibility
 }
 
 // ── Step 1: Drink picker ──────────────────────────────────────────────────────
