@@ -100,7 +100,7 @@ class MainViewModel(
     }
 
     val sessionLoadState: StateFlow<SessionLoadState> =
-        _currentSession
+        sessionRepository.observeCurrentSession()
             .map { SessionLoadState.Loaded(it?.id) }
             .stateIn(viewModelScope, SharingStarted.Eagerly, SessionLoadState.Loading)
 
