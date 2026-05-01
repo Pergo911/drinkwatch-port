@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -63,6 +64,11 @@ fun SessionTab(
     Column(modifier = modifier) {
         PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
             tabTitles.forEachIndexed { index, title ->
+                val enabled = index == 0 || session != null
+                val contentColor = if (enabled)
+                    MaterialTheme.colorScheme.onSurface
+                else
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                 Tab(
                     selected = pagerState.currentPage == index,
                     onClick = {
@@ -70,12 +76,13 @@ fun SessionTab(
                             pagerState.animateScrollToPage(index)
                         }
                     },
-                    enabled = index == 0 || session != null,
-                    text = { Text(title) },
+                    enabled = enabled,
+                    text = { Text(title, color = contentColor) },
                     icon = {
                         Icon(
                             imageVector = tabIcons[index],
                             contentDescription = null,
+                            tint = contentColor,
                         )
                     },
                 )
@@ -84,7 +91,7 @@ fun SessionTab(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
-            userScrollEnabled = true,
+            userScrollEnabled = session != null,
         ) { page ->
             when (page) {
                 0 -> OverviewTab(viewModel = viewModel)
