@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.SessionViewModel
 
 @Composable
@@ -29,7 +30,7 @@ fun GlassGroupsTab(viewModel: SessionViewModel) {
         columns = GridCells.Adaptive(100.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(Dimens.DetailHorizontalPadding),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {

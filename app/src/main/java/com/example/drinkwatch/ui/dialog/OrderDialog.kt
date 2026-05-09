@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,15 +23,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -38,14 +42,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +56,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,7 +64,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
-import com.example.drinkwatch.ui.component.GlassNumberPicker
+import com.example.drinkwatch.ui.component.SearchField
+import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.util.findActivity
 import com.example.drinkwatch.viewmodel.MainViewModel
 import com.example.drinkwatch.viewmodel.SessionViewModel
@@ -142,9 +147,9 @@ fun OrderDialogContent(
     ) {
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
-                    Text(if (step == Step.DRINK) "Choose Drink" else "Choose Glass")
+                    Text(if (step == Step.DRINK) "Add Drink" else "Choose Glass")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -156,6 +161,11 @@ fun OrderDialogContent(
                         )
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                ),
             )
         },
         bottomBar = {
@@ -203,7 +213,7 @@ fun OrderDialogContent(
                         ) { Text("Confirm Now") }
                     }
             }
-        },
+        }
     ) { innerPadding ->
         when (step) {
             Step.DRINK ->
@@ -262,6 +272,7 @@ private fun DrinkPickerContent(
     }
 
     var searchQuery by remember { mutableStateOf("") }
+    var isSearchExpanded by remember { mutableStateOf(false) }
 
     val typeOrder = listOf(DrinkType.SHOT, DrinkType.LONG_DRINK, DrinkType.NON_ALCOHOLIC)
     val filteredDrinks = remember(drinks, searchQuery) {
@@ -271,17 +282,15 @@ private fun DrinkPickerContent(
     val grouped = remember(filteredDrinks) { filteredDrinks.groupBy { it.type } }
 
     Column(modifier = modifier) {
-        OutlinedTextField(
+        SearchField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = { Text("Search drinks…") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
+            placeholder = "Search drinks…",
+            expanded = isSearchExpanded,
+            onExpand = { isSearchExpanded = true },
+            onCollapse = { isSearchExpanded = false; searchQuery = "" },
+            collapsedHorizontalPadding = Dimens.DetailHorizontalPadding,
+            collapsedVerticalPadding = 8.dp,
             trailingIcon = if (searchQuery.isNotEmpty()) {
                 {
                     IconButton(onClick = { searchQuery = "" }) {
@@ -292,10 +301,7 @@ private fun DrinkPickerContent(
                     }
                 }
             } else null,
-            singleLine = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
         )
 
         if (filteredDrinks.isEmpty()) {
@@ -317,7 +323,7 @@ private fun DrinkPickerContent(
             }
         } else {
             LazyColumn(
-                contentPadding = PaddingValues(bottom = 8.dp),
+                contentPadding = PaddingValues(bottom = 8.dp, start = Dimens.DetailHorizontalPadding, end = Dimens.DetailHorizontalPadding),
                 modifier = Modifier.fillMaxSize(),
             ) {
                 typeOrder.forEach { type ->
@@ -325,7 +331,7 @@ private fun DrinkPickerContent(
                     item(key = "header_$type") {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            modifier = Modifier.padding(horizontal = 0.dp, vertical = 8.dp),
                         ) {
                             Icon(
                                 imageVector = when (type) {
@@ -377,6 +383,8 @@ private fun DrinkPickerContent(
                             } else null,
                             modifier = Modifier
                                 .alpha(if (drink.isDisabled) 0.38f else 1f)
+                                .padding(8.dp, 0.dp)
+                                .clip(MaterialTheme.shapes.medium)
                                 .then(
                                     if (!drink.isDisabled)
                                         Modifier.clickable { onSelectDrink(drink.id) }
@@ -404,9 +412,11 @@ private fun GlassPickerContent(
     modifier: Modifier = Modifier,
 ) {
     val glassIsAlreadyTaken = selectedGlassGroup != null && selectedGlassNumber in takenGlassNumbersForGroup
+    val glassPickerEnabled = selectedGlassGroup != null
+    var showGlassPickerDialog by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(horizontal = Dimens.DetailHorizontalPadding, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text("Glass Group", style = MaterialTheme.typography.labelMedium)
@@ -426,19 +436,32 @@ private fun GlassPickerContent(
             }
         }
 
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .alpha(if (glassPickerEnabled) 1f else 0.38f)
+                .clip(RoundedCornerShape(12.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+                .clickable(enabled = glassPickerEnabled) { showGlassPickerDialog = true }
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            key(selectedGlassGroup) {
-                GlassNumberPicker(
-                    selectedNumber = selectedGlassNumber,
-                    takenNumbers = takenGlassNumbersForGroup,
-                    onNumberChange = onGlassNumberChange,
-                    enabled = selectedGlassGroup != null,
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text("Glass #", style = MaterialTheme.typography.labelMedium)
+                Text(
+                    text = if (glassPickerEnabled) selectedGlassNumber.toString() else "–",
+                    style = MaterialTheme.typography.titleLarge,
                 )
             }
+            Icon(
+                imageVector = Icons.Filled.Edit,
+                contentDescription = "Change glass number",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
         }
+
         if (glassIsAlreadyTaken) {
             Text(
                 text = "Glass $selectedGlassNumber is already taken.",
@@ -447,5 +470,17 @@ private fun GlassPickerContent(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
             )
         }
+    }
+
+    if (showGlassPickerDialog) {
+        GlassNumberPickerDialog(
+            initialNumber = selectedGlassNumber,
+            takenNumbers = takenGlassNumbersForGroup,
+            onDismiss = { showGlassPickerDialog = false },
+            onConfirm = { number ->
+                onGlassNumberChange(number)
+                showGlassPickerDialog = false
+            },
+        )
     }
 }

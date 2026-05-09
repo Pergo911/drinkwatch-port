@@ -90,6 +90,17 @@ class SessionViewModel(
         viewModelScope.launch { sessionRepository.updatePlayer(player) }
     }
 
+    fun savePlayer(player: Player, name: String, phone: String, note: String, isDisabled: Boolean) {
+        viewModelScope.launch {
+            sessionRepository.updatePlayer(player.copy(name = name, phone = phone, note = note))
+            if (isDisabled != player.isDisabled) {
+                val sessionId = currentSession.value?.id ?: return@launch
+                if (isDisabled) sessionRepository.disablePlayer(sessionId, player.id)
+                else sessionRepository.enablePlayer(sessionId, player.id)
+            }
+        }
+    }
+
     fun deletePlayer(player: Player) {
         viewModelScope.launch { sessionRepository.deletePlayer(player) }
     }
@@ -119,6 +130,17 @@ class SessionViewModel(
 
     fun updateDrink(drink: Drink) {
         viewModelScope.launch { sessionRepository.updateDrink(drink) }
+    }
+
+    fun saveDrink(drink: Drink, name: String, type: DrinkType, isDisabled: Boolean) {
+        viewModelScope.launch {
+            sessionRepository.updateDrink(drink.copy(name = name, type = type))
+            if (isDisabled != drink.isDisabled) {
+                val sessionId = currentSession.value?.id ?: return@launch
+                if (isDisabled) sessionRepository.disableDrink(sessionId, drink.id)
+                else sessionRepository.enableDrink(sessionId, drink.id)
+            }
+        }
     }
 
     fun deleteDrink(drink: Drink) {

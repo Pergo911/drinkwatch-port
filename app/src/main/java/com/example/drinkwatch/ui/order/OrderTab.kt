@@ -21,8 +21,8 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import com.example.drinkwatch.ui.component.SearchField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.drinkwatch.ui.dialog.TimeoutDialog
+import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.PlayerUiState
 
 @Composable
@@ -50,6 +51,7 @@ fun OrderTab(
 ) {
     var timeoutDialogPlayerId by remember { mutableStateOf<Long?>(null) }
     var searchQuery by remember { mutableStateOf("") }
+    var isSearchExpanded by remember { mutableStateOf(false) }
 
     val filteredPlayers = remember(playerUiStates, searchQuery) {
         if (searchQuery.isBlank()) playerUiStates
@@ -86,17 +88,15 @@ fun OrderTab(
             }
         } else {
             Column(modifier = Modifier.fillMaxSize()) {
-                OutlinedTextField(
+                SearchField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search players…") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    },
+                    placeholder = "Search players…",
+                    expanded = isSearchExpanded,
+                    onExpand = { isSearchExpanded = true },
+                    onCollapse = { isSearchExpanded = false; searchQuery = "" },
+                    collapsedHorizontalPadding = Dimens.ScreenHorizontalPadding,
+                    collapsedVerticalPadding = Dimens.ScreenVerticalPadding,
                     trailingIcon = if (searchQuery.isNotEmpty()) {
                         {
                             IconButton(onClick = { searchQuery = "" }) {
@@ -107,16 +107,13 @@ fun OrderTab(
                             }
                         }
                     } else null,
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.fillMaxWidth(),
                 )
                 if (filteredPlayers.isEmpty()) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(bottom = 80.dp),
+                            .padding(bottom = Dimens.FabClearance),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
@@ -136,8 +133,8 @@ fun OrderTab(
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
+                            start = Dimens.ScreenHorizontalPadding,
+                            end = Dimens.ScreenHorizontalPadding,
                             top = 4.dp,
                             bottom = if (queueSize > 0) 88.dp else 8.dp,
                         ),

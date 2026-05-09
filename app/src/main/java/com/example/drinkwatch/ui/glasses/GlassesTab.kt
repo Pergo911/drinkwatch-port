@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.drinkwatch.ui.dialog.ReturnGlassDialog
+import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.TakenGlassUiState
 
 @Composable
@@ -53,7 +54,7 @@ fun GlassesTab(
         }
     } else {
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(horizontal = Dimens.ScreenHorizontalPadding, vertical = Dimens.ScreenVerticalPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = modifier.fillMaxSize(),
         ) {

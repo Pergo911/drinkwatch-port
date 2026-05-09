@@ -83,7 +83,6 @@ fun MainScreen(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                sessionName = sessionName,
                 onSettingsClick = onNavigateToSettings,
             )
         },

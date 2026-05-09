@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drinkwatch.data.model.Session
+import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.SessionViewModel
 
 @Composable
@@ -145,7 +146,7 @@ private fun NoSessionContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(Dimens.EmptyStatePadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -197,7 +198,7 @@ private fun SessionLoadedContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(Dimens.DetailHorizontalPadding),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         OutlinedTextField(

@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.drinkwatch.data.model.Event
+import com.example.drinkwatch.data.model.Player
 import com.example.drinkwatch.data.model.PlayerDerivedState
 import com.example.drinkwatch.data.model.Session
 import com.example.drinkwatch.data.repository.SessionRepository
 import com.example.drinkwatch.data.repository.SettingsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -107,6 +109,23 @@ class PlayerDetailViewModel(
                     }
                 }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    fun savePlayer(name: String, phone: String, note: String, isDisabled: Boolean) {
+        val player = derivedState.value?.player ?: return
+        val sessionId = _currentSession.value?.id ?: return
+        viewModelScope.launch {
+            sessionRepository.updatePlayer(player.copy(name = name, phone = phone, note = note))
+            if (isDisabled != player.isDisabled) {
+                if (isDisabled) sessionRepository.disablePlayer(sessionId, player.id)
+                else sessionRepository.enablePlayer(sessionId, player.id)
+            }
+        }
+    }
+
+    fun deletePlayer() {
+        val player = derivedState.value?.player ?: return
+        viewModelScope.launch { sessionRepository.deletePlayer(player) }
+    }
 
     class Factory(
         private val sessionRepository: SessionRepository,

@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.example.drinkwatch.util.formatCountdown
 import com.example.drinkwatch.viewmodel.PlayerUiState
@@ -55,7 +56,7 @@ fun PlayerCard(
 
     val cardModifier = modifier
         .fillMaxWidth()
-        .alpha(if (player.isDisabled) 0.38f else 1f)
+        .alpha(if (player.isDisabled) 0.5f else 1f)
 
     val cardContent: @Composable () -> Unit = {
         Row(
@@ -78,7 +79,9 @@ fun PlayerCard(
                 ) {
                     Text(
                         text = player.name,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            textDecoration = if (player.isDisabled) TextDecoration.LineThrough else null
+                        ),
                         modifier = Modifier.weight(1f, fill = false),
                     )
                     Spacer(Modifier.width(8.dp))
@@ -144,43 +147,44 @@ fun PlayerCard(
                 }
 
                 // ── Action area ────────────────────────────────────────────
-                if (!player.isDisabled) {
-                    Spacer(Modifier.height(8.dp))
-                    if (queued != null) {
-                        val glassLabel = if (queued.glassGroup != null && queued.glassNumber != null) {
-                            "${queued.glassGroup}${queued.glassNumber}"
-                        } else null
-                        QueueOverlay(
-                            drinkName  = playerUiState.queuedDrinkName ?: "",
-                            glassLabel = glassLabel,
-                            onCancel   = onCancelOrder,
-                        )
-                    } else {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                Spacer(Modifier.height(8.dp))
+                if (queued != null) {
+                    val glassLabel = if (queued.glassGroup != null && queued.glassNumber != null) {
+                        "${queued.glassGroup}${queued.glassNumber}"
+                    } else null
+                    QueueOverlay(
+                        drinkName  = playerUiState.queuedDrinkName ?: "",
+                        glassLabel = glassLabel,
+                        onCancel   = onCancelOrder,
+                    )
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                    ) {
+                        OutlinedButton(
+                            onClick = onTimeout,
+                            enabled = !player.isDisabled,
                         ) {
-                            OutlinedButton(onClick = onTimeout) {
-                                Icon(
-                                    Icons.Filled.Timer,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                                )
-                                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                                Text("Timeout")
-                            }
-                            Button(
-                                onClick = onAddDrink,
-                                enabled = !isTimeout,
-                            ) {
-                                Icon(
-                                    Icons.Filled.Add,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                                )
-                                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                                Text("Drink")
-                            }
+                            Icon(
+                                Icons.Filled.Timer,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                            Text("Timeout")
+                        }
+                        Button(
+                            onClick = onAddDrink,
+                            enabled = !isTimeout && !player.isDisabled,
+                        ) {
+                            Icon(
+                                Icons.Filled.Add,
+                                contentDescription = null,
+                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                            )
+                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                            Text("Drink")
                         }
                     }
                 }
@@ -188,11 +192,7 @@ fun PlayerCard(
         }
     }
 
-    if (player.isDisabled) {
-        ElevatedCard(modifier = cardModifier) { cardContent() }
-    } else {
-        ElevatedCard(onClick = onCardClick, modifier = cardModifier) { cardContent() }
-    }
+    ElevatedCard(onClick = onCardClick, modifier = cardModifier) { cardContent() }
 }
 
 @Composable

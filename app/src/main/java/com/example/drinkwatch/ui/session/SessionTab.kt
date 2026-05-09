@@ -62,7 +62,7 @@ fun SessionTab(
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = modifier) {
-        PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
+        PrimaryTabRow(selectedTabIndex = pagerState.currentPage, containerColor = MaterialTheme.colorScheme.surfaceContainer) {
             tabTitles.forEachIndexed { index, title ->
                 val enabled = index == 0 || session != null
                 val contentColor = if (enabled)
@@ -95,8 +95,8 @@ fun SessionTab(
         ) { page ->
             when (page) {
                 0 -> OverviewTab(viewModel = viewModel)
-                1 -> if (session != null) PlayersTab(viewModel = viewModel)
-                2 -> if (session != null) DrinksTab(viewModel = viewModel)
+                1 -> if (session != null) PlayersTab(viewModel = viewModel, isActive = pagerState.currentPage == 1)
+                2 -> if (session != null) DrinksTab(viewModel = viewModel, isActive = pagerState.currentPage == 2)
                 3 -> if (session != null) GlassGroupsTab(viewModel = viewModel)
             }
         }
