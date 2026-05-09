@@ -1,9 +1,9 @@
 package com.example.drinkwatch.ui.settings
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,27 +13,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,16 +39,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.drinkwatch.BuildConfig
 import com.example.drinkwatch.DrinkWatchApplication
 import com.example.drinkwatch.data.model.Theme
+import com.example.drinkwatch.ui.dialog.HighlightThresholdDialog
 import com.example.drinkwatch.ui.dialog.TimeoutDialog
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.util.formatDuration
@@ -64,18 +59,12 @@ fun SettingsScreen(onBack: () -> Unit) {
     val viewModel: SettingsViewModel = viewModel(factory = app.settingsViewModelFactory)
     val settings by viewModel.settings.collectAsStateWithLifecycle()
 
-    // Initialised once at composition from the StateFlow's current value. Plain rememberSaveable
-    // (no key) avoids jank from intermediate DataStore saves resetting text during typing.
-    var highlightText by rememberSaveable {
-        mutableStateOf(settings.activeDrinkHighlight.toString())
-    }
-
-    val highlightError = highlightText.toIntOrNull()?.let { it < 1 } ?: true
+    var showHighlightDialog by rememberSaveable { mutableStateOf(false) }
     var showTimeoutDialog by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            LargeTopAppBar(
                 title = { Text("Settings") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -84,85 +73,67 @@ fun SettingsScreen(onBack: () -> Unit) {
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                 ),
             )
         },
     ) { padding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(padding)
-                .padding(horizontal = Dimens.DetailHorizontalPadding, vertical = 0.dp),
+                .padding(horizontal = Dimens.ScreenHorizontalPadding, vertical = Dimens.ScreenVerticalPadding),
         ) {
-            // ── Theme ──────────────────────────────────────────────────────────
-            SectionHeader(icon = Icons.Filled.DarkMode, title = "Theme")
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                listOf(Theme.LIGHT to "Light", Theme.SYSTEM to "System", Theme.DARK to "Dark")
-                    .forEachIndexed { index, (theme, label) ->
-                        SegmentedButton(
-                            selected = settings.theme == theme,
-                            onClick = { viewModel.setTheme(theme) },
-                            shape = SegmentedButtonDefaults.itemShape(index, 3),
-                        ) {
-                            Text(label)
+            // ── Appearance ─────────────────────────────────────────────────────
+            SettingsSectionHeader(icon = Icons.Filled.DarkMode, title = "Appearance")
+            SettingsPreferenceGroup {
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                ) {
+                    listOf(Theme.LIGHT to "Light", Theme.SYSTEM to "System", Theme.DARK to "Dark")
+                        .forEachIndexed { index, (theme, label) ->
+                            SegmentedButton(
+                                selected = settings.theme == theme,
+                                onClick = { viewModel.setTheme(theme) },
+                                shape = SegmentedButtonDefaults.itemShape(index, 3),
+                            ) { Text(label) }
                         }
-                    }
+                }
             }
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-            // ── Active drink highlight ─────────────────────────────────────────
-            SectionHeader(icon = Icons.Filled.Notifications, title = "Active Drink Highlight")
-            OutlinedTextField(
-                value = highlightText,
-                onValueChange = { new ->
-                    highlightText = new.filter(Char::isDigit).trimStart('0').ifEmpty { "0" }
-                    highlightText.toIntOrNull()?.takeIf { it >= 1 }
-                        ?.let { viewModel.setActiveDrinkHighlight(it) }
-                },
-                label = { Text("Threshold") },
-                supportingText = {
-                    if (highlightError) Text("Must be \u2265 1")
-                    else Text("Highlight players with \u2265 N active drinks")
-                },
-                isError = highlightError,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-            // ── Default timeout ────────────────────────────────────────────────
-            SectionHeader(icon = Icons.Filled.Timer, title = "Default Timeout")
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
-                    .clickable { showTimeoutDialog = true }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = formatDuration(settings.defaultTimeoutSeconds),
-                    style = MaterialTheme.typography.bodyLarge,
+            // ── Gameplay ───────────────────────────────────────────────────────
+            SettingsSectionHeader(icon = Icons.Filled.Tune, title = "Gameplay")
+            SettingsPreferenceGroup {
+                SettingsPreferenceRow(
+                    title = "Active drink highlight",
+                    subtitle = "Highlight players with this many or more active drinks",
+                    value = settings.activeDrinkHighlight.toString(),
+                    onClick = { showHighlightDialog = true },
                 )
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = "Edit timeout",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp),
+                HorizontalDivider(modifier = Modifier.padding(start = 16.dp))
+                SettingsPreferenceRow(
+                    title = "Default timeout",
+                    subtitle = "Duration applied when timing out a player",
+                    value = formatDuration(settings.defaultTimeoutSeconds),
+                    onClick = { showTimeoutDialog = true },
                 )
             }
         }
     }
 
+    if (showHighlightDialog) {
+        HighlightThresholdDialog(
+            current = settings.activeDrinkHighlight,
+            onDismiss = { showHighlightDialog = false },
+            onConfirm = { count ->
+                viewModel.setActiveDrinkHighlight(count)
+                showHighlightDialog = false
+            },
+        )
+    }
     if (showTimeoutDialog) {
         TimeoutDialog(
             defaultSeconds = settings.defaultTimeoutSeconds,
@@ -176,17 +147,73 @@ fun SettingsScreen(onBack: () -> Unit) {
 }
 
 @Composable
-private fun SectionHeader(icon: ImageVector, title: String) {
+private fun SettingsSectionHeader(icon: ImageVector, title: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 2.dp),
+        modifier = Modifier.padding(start = 4.dp, bottom = 2.dp),
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp),
         )
         Spacer(Modifier.width(8.dp))
-        Text(title, style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+}
+
+@Composable
+private fun SettingsPreferenceGroup(content: @Composable ColumnScope.() -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 1.dp,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(content = content)
+    }
+}
+
+@Composable
+private fun SettingsPreferenceRow(
+    title: String,
+    subtitle: String,
+    value: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Spacer(Modifier.width(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
+        }
     }
 }
