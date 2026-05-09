@@ -18,21 +18,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import com.example.drinkwatch.ui.component.SearchField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,11 +40,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drinkwatch.data.model.Player
+import com.example.drinkwatch.ui.component.SearchField
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.SessionViewModel
 
@@ -69,9 +66,10 @@ fun PlayersTab(viewModel: SessionViewModel, isActive: Boolean = true) {
     val filteredPlayers = remember(players, searchQuery) {
         if (searchQuery.isBlank()) players
         else players.filter { player ->
-            player.name.contains(searchQuery, ignoreCase = true) ||
-                    player.phone.contains(searchQuery, ignoreCase = true) ||
-                    player.note.contains(searchQuery, ignoreCase = true)
+            player.name.contains(searchQuery, ignoreCase = true) || player.phone.contains(
+                searchQuery,
+                ignoreCase = true
+            ) || player.note.contains(searchQuery, ignoreCase = true)
         }
     }
 
@@ -209,17 +207,18 @@ private fun PlayerListItem(
         modifier = Modifier
             .clip(MaterialTheme.shapes.medium)
             .clickable(onClick = onEdit)
-            .padding(horizontal = 2.dp, vertical = 10.dp)
+            .padding(vertical = 10.dp)
             .alpha(if (player.isDisabled) 0.5f else 1.0f),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Spacer(Modifier.width(8.dp))
         // Avatar
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             Icon(
                 imageVector = Icons.Filled.Person,
@@ -230,9 +229,11 @@ private fun PlayerListItem(
         }
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(player.name, style = MaterialTheme.typography.bodyLarge.copy(
-                textDecoration = if (player.isDisabled) TextDecoration.LineThrough else null
-            ))
+            Text(
+                player.name, style = MaterialTheme.typography.bodyLarge.copy(
+                    textDecoration = if (player.isDisabled) TextDecoration.LineThrough else null
+                )
+            )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -268,7 +269,7 @@ private fun PlayerListItem(
             Icons.Filled.Edit,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         )
     }
 

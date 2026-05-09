@@ -83,7 +83,10 @@ fun SettingsScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(padding)
-                .padding(horizontal = Dimens.ScreenHorizontalPadding, vertical = Dimens.ScreenVerticalPadding),
+                .padding(
+                    horizontal = Dimens.ScreenHorizontalPadding,
+                    vertical = Dimens.ScreenVerticalPadding
+                ),
         ) {
             // ── Appearance ─────────────────────────────────────────────────────
             SettingsSectionHeader(icon = Icons.Filled.DarkMode, title = "Appearance")
@@ -113,7 +116,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                     value = settings.activeDrinkHighlight.toString(),
                     onClick = { showHighlightDialog = true },
                 )
-                HorizontalDivider(modifier = Modifier.padding(start = 16.dp))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 SettingsPreferenceRow(
                     title = "Default timeout",
                     subtitle = "Duration applied when timing out a player",

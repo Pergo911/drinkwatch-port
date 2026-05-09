@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -25,8 +26,6 @@ import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SportsBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
-import com.example.drinkwatch.ui.component.SearchField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,14 +43,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
+import com.example.drinkwatch.ui.component.SearchField
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.SessionViewModel
 
@@ -217,10 +214,12 @@ private fun DrinkListItem(
             .clip(MaterialTheme.shapes.medium)
             .fillMaxWidth()
             .clickable(onClick = onEdit)
-            .padding(horizontal = 2.dp, vertical = 10.dp)
+            .padding(vertical = 10.dp)
             .alpha(if (drink.isDisabled) 0.5f else 1.0f),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Spacer(Modifier.width(8.dp))
+
         // Drink type icon circle
         Box(
             contentAlignment = Alignment.Center,
@@ -239,8 +238,7 @@ private fun DrinkListItem(
         Spacer(Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                drink.name,
-                style = MaterialTheme.typography.bodyLarge.copy(
+                drink.name, style = MaterialTheme.typography.bodyLarge.copy(
                     textDecoration = if (drink.isDisabled) TextDecoration.LineThrough else null
                 )
             )
@@ -267,7 +265,7 @@ private fun DrinkListItem(
             Icons.Filled.Edit,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         )
 
     }
