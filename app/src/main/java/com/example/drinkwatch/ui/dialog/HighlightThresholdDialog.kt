@@ -19,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 
 @Composable
 fun HighlightThresholdDialog(
@@ -40,17 +42,17 @@ fun HighlightThresholdDialog(
                 modifier = Modifier.size(32.dp),
             )
         },
-        title = { Text("Active Drink Highlight") },
+        title = { Text(stringResource(R.string.highlight_dialog_title)) },
         text = {
             OutlinedTextField(
                 value = text,
                 onValueChange = { new ->
                     text = new.filter(Char::isDigit).trimStart('0').ifEmpty { "0" }
                 },
-                label = { Text("Threshold") },
+                label = { Text(stringResource(R.string.highlight_dialog_threshold_label)) },
                 supportingText = {
-                    if (isError) Text("Must be \u2265 1")
-                    else Text("Highlight players with \u2265 $parsed active drinks")
+                    if (isError) Text(stringResource(R.string.highlight_dialog_error))
+                    else Text(stringResource(R.string.highlight_dialog_supporting, parsed!!))
                 },
                 isError = isError,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -63,11 +65,11 @@ fun HighlightThresholdDialog(
                 onClick = { parsed?.let(onConfirm) },
                 enabled = !isError,
             ) {
-                Text("Set")
+                Text(stringResource(R.string.btn_set))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) }
         },
     )
 }

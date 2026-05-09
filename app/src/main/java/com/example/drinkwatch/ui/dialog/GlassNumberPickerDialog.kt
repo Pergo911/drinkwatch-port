@@ -16,7 +16,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.component.GlassNumberPicker
 
 @Composable
@@ -38,7 +40,7 @@ fun GlassNumberPickerDialog(
                 modifier = Modifier.size(32.dp),
             )
         },
-        title = { Text("Select Glass Number") },
+        title = { Text(stringResource(R.string.glass_number_dialog_title)) },
         text = {
             GlassNumberPicker(
                 selectedNumber = pickedNumber,
@@ -49,11 +51,11 @@ fun GlassNumberPickerDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(pickedNumber) }) {
-                Text("Select")
+                Text(stringResource(R.string.btn_select))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) }
         },
     )
 }

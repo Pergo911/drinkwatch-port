@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.viewmodel.TakenGlassUiState
 
 @Composable
@@ -83,7 +85,7 @@ fun GlassCard(
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Undo,
-                contentDescription = "Return glass",
+                contentDescription = stringResource(R.string.cd_return_glass),
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(20.dp),
             )

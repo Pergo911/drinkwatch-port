@@ -24,6 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 
 /**
  * A collapsible table card with a title header, column labels, and data rows.
@@ -62,7 +64,7 @@ fun ExpandableEventTable(
                 Icon(
                     imageVector = if (expanded) Icons.Filled.ExpandLess
                                   else Icons.Filled.ExpandMore,
-                    contentDescription = if (expanded) "Collapse" else "Expand",
+                    contentDescription = if (expanded) stringResource(R.string.cd_collapse) else stringResource(R.string.cd_expand),
                 )
             }
 
@@ -72,7 +74,7 @@ fun ExpandableEventTable(
 
                     if (rows.isEmpty()) {
                         Text(
-                            text = "No history.",
+                            text = stringResource(R.string.empty_no_history),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier

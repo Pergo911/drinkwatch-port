@@ -41,6 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
 import com.example.drinkwatch.ui.theme.Dimens
@@ -62,9 +64,9 @@ fun DrinkDialog(
     val scope = rememberCoroutineScope()
 
     val drinkTypeOptions = listOf(
-        DrinkType.SHOT to "Shot",
-        DrinkType.LONG_DRINK to "Long drink",
-        DrinkType.NON_ALCOHOLIC to "Non-alcoholic",
+        DrinkType.SHOT to stringResource(R.string.drink_type_shot),
+        DrinkType.LONG_DRINK to stringResource(R.string.drink_type_long_drink),
+        DrinkType.NON_ALCOHOLIC to stringResource(R.string.drink_type_non_alcoholic),
     )
 
     fun dismiss(action: () -> Unit = {}) {
@@ -90,7 +92,7 @@ fun DrinkDialog(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = if (drink != null) "Edit Drink • ${drink.name}" else "Add Drink",
+                text = if (drink != null) stringResource(R.string.drink_dialog_title_edit, drink.name) else stringResource(R.string.drink_dialog_title_add),
                 style = MaterialTheme.typography.titleLarge,
             )
 
@@ -107,12 +109,12 @@ fun DrinkDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name *") },
+                    label = { Text(stringResource(R.string.drink_field_name)) },
                     singleLine = true,
                     modifier = Modifier.weight(1f),
                 )
             }
-            Text("Type", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.drink_type_label), style = MaterialTheme.typography.labelLarge)
             SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                 drinkTypeOptions.forEachIndexed { index, (type, label) ->
                     SegmentedButton(
@@ -136,7 +138,7 @@ fun DrinkDialog(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Disabled",
+                        text = stringResource(R.string.player_status_disabled),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f).padding(start = 8.dp),
                     )
@@ -160,11 +162,11 @@ fun DrinkDialog(
                         ) {
                             Icon(
                                 Icons.Filled.Delete,
-                                contentDescription = "Delete Drink",
+                                contentDescription = stringResource(R.string.cd_delete_drink),
                                 tint = MaterialTheme.colorScheme.error,
                             )
                             Text(
-                                "Delete",
+                                stringResource(R.string.btn_delete),
                                 color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.padding(start = 4.dp),
                             )
@@ -182,7 +184,7 @@ fun DrinkDialog(
                         modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                    Text("Save")
+                    Text(stringResource(R.string.btn_save))
                 }
             }
         }
@@ -191,8 +193,8 @@ fun DrinkDialog(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete Drink?") },
-            text = { Text("This will permanently remove ${drink?.name}.") },
+            title = { Text(stringResource(R.string.drink_dialog_delete_title)) },
+            text = { Text(stringResource(R.string.drink_dialog_delete_text, drink?.name ?: "")) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -202,10 +204,10 @@ fun DrinkDialog(
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error,
                     ),
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.btn_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) { Text("Cancel") }
+                TextButton(onClick = { showDeleteConfirm = false }) { Text(stringResource(R.string.btn_cancel)) }
             },
         )
     }

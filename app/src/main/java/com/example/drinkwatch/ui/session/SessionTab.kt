@@ -21,9 +21,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.session.drinks.DrinksTab
 import com.example.drinkwatch.ui.session.glassgroups.GlassGroupsTab
 import com.example.drinkwatch.ui.session.overview.OverviewTab
@@ -39,19 +41,24 @@ fun SessionTab(
 ) {
     val app = LocalContext.current.applicationContext as DrinkWatchApplication
     val viewModel: SessionViewModel = viewModel(factory = app.sessionViewModelFactory)
+    val context = LocalContext.current
 
     val session by viewModel.currentSession.collectAsStateWithLifecycle()
     val uiError by viewModel.uiError.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiError) {
-        val msg = uiError
-        if (msg != null) {
-            onShowSnackbar(msg)
+        uiError?.let {
+            onShowSnackbar(it.asString(context))
             viewModel.clearError()
         }
     }
 
-    val tabTitles = listOf("Overview", "Players", "Drinks", "Glasses")
+    val tabTitles = listOf(
+        stringResource(R.string.session_tab_overview),
+        stringResource(R.string.session_tab_players),
+        stringResource(R.string.session_tab_drinks),
+        stringResource(R.string.session_tab_glasses),
+    )
     val tabIcons = listOf(
         Icons.Filled.Dataset,
         Icons.Filled.People,

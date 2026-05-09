@@ -1,9 +1,11 @@
 package com.example.drinkwatch.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.example.drinkwatch.R
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
 import com.example.drinkwatch.data.model.GlassGroup
@@ -59,8 +61,8 @@ class SessionViewModel(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    private val _uiError = MutableStateFlow<String?>(null)
-    val uiError: StateFlow<String?> = _uiError.asStateFlow()
+    private val _uiError = MutableStateFlow<UiText?>(null)
+    val uiError: StateFlow<UiText?> = _uiError.asStateFlow()
 
     // ── Session actions ───────────────────────────────────────────────────────
 
@@ -185,7 +187,8 @@ class SessionViewModel(
                     sessionSerializer.export(sessionId, outputStream)
                 }
             } catch (e: Exception) {
-                _uiError.value = e.message ?: "Export failed"
+                Log.e("SessionViewModel", "Export failed", e)
+                _uiError.value = UiText.Res(R.string.error_export_failed)
             }
         }
     }
@@ -199,15 +202,15 @@ class SessionViewModel(
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
             } catch (e: SerializationException) {
-                _uiError.value = "Import failed: invalid or corrupted file."
+                _uiError.value = UiText.Res(R.string.error_import_invalid)
             } catch (e: Exception) {
-                _uiError.value = "Import failed."
+                _uiError.value = UiText.Res(R.string.error_import_failed)
             }
         }
     }
 
-    fun reportError(message: String) {
-        _uiError.value = message
+    fun reportError(uiText: UiText) {
+        _uiError.value = uiText
     }
 
     fun clearError() {

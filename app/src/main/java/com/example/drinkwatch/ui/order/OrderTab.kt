@@ -30,7 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.dialog.TimeoutDialog
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.PlayerUiState
@@ -52,6 +55,9 @@ fun OrderTab(
     var timeoutDialogPlayerId by remember { mutableStateOf<Long?>(null) }
     var searchQuery by remember { mutableStateOf("") }
     var isSearchExpanded by remember { mutableStateOf(false) }
+
+    val strQueueBlocked = stringResource(R.string.order_queue_blocked)
+    val strNoPlayersMatch = stringResource(R.string.no_players_match, searchQuery)
 
     val filteredPlayers = remember(playerUiStates, searchQuery) {
         if (searchQuery.isBlank()) playerUiStates
@@ -75,13 +81,13 @@ fun OrderTab(
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "No players yet",
+                    text = stringResource(R.string.empty_no_players_yet),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "Add players in Session → Players.",
+                    text = stringResource(R.string.empty_add_players_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -91,7 +97,7 @@ fun OrderTab(
                 SearchField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = "Search players…",
+                    placeholder = stringResource(R.string.search_players_placeholder),
                     expanded = isSearchExpanded,
                     onExpand = { isSearchExpanded = true },
                     onCollapse = { isSearchExpanded = false; searchQuery = "" },
@@ -102,7 +108,7 @@ fun OrderTab(
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
-                                    contentDescription = "Clear search",
+                                    contentDescription = stringResource(R.string.cd_clear_search),
                                 )
                             }
                         }
@@ -125,7 +131,7 @@ fun OrderTab(
                         )
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "No players match \"$searchQuery\"",
+                            text = strNoPlayersMatch,
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -147,7 +153,7 @@ fun OrderTab(
                                 activeDrinkHighlight = activeDrinkHighlight,
                                 onAddDrink = {
                                     if (uiState.queuedOrder != null) {
-                                        onShowSnackbar("Cancel or send the queue first.")
+                                        onShowSnackbar(strQueueBlocked)
                                     } else {
                                         onNavigateToOrderDialog(uiState.derived.player.id)
                                     }
@@ -167,7 +173,7 @@ fun OrderTab(
             ExtendedFloatingActionButton(
                 onClick = onCommitQueue,
                 icon = { Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null) },
-                text = { Text("Send $queueSize order${if (queueSize > 1) "s" else ""}") },
+                text = { Text(pluralStringResource(R.plurals.queue_send_orders, queueSize, queueSize)) },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),

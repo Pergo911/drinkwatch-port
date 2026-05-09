@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.component.DurationPicker
 
 @Composable
@@ -36,7 +38,7 @@ fun TimeoutDialog(
                 modifier = Modifier.size(32.dp),
             )
         },
-        title = { Text("Set Timeout") },
+        title = { Text(stringResource(R.string.timeout_dialog_title)) },
         text = {
             DurationPicker(
                 initialSeconds = defaultSeconds,
@@ -46,11 +48,11 @@ fun TimeoutDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(pickedSeconds) }) {
-                Text("Set Timeout")
+                Text(stringResource(R.string.timeout_dialog_confirm))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) }
         },
     )
 }

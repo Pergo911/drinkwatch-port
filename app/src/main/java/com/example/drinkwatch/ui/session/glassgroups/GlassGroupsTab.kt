@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.SessionViewModel
@@ -38,7 +40,7 @@ fun GlassGroupsTab(viewModel: SessionViewModel) {
             FilterChip(
                 selected = letter in activeLetters,
                 onClick = { viewModel.toggleGlassGroup(letter) },
-                label = { Text("Group $letter") },
+                label = { Text(stringResource(R.string.glass_group_label, letter.toString())) },
                 leadingIcon = if (letter in activeLetters) {
                     { Icon(Icons.Filled.Check, contentDescription = null) }
                 } else null,

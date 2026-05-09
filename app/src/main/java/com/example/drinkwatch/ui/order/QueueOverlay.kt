@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 
 @Composable
 fun QueueOverlay(
@@ -66,7 +68,7 @@ fun QueueOverlay(
         IconButton(onClick = onCancel) {
             Icon(
                 Icons.Filled.Close,
-                contentDescription = "Cancel queued order",
+                contentDescription = stringResource(R.string.cd_cancel_queued_order),
                 tint = MaterialTheme.colorScheme.onSecondaryContainer,
             )
         }

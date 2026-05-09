@@ -2,7 +2,7 @@ package com.example.drinkwatch
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,9 +16,14 @@ import com.example.drinkwatch.data.model.Theme
 import com.example.drinkwatch.ui.navigation.AppNavHost
 import com.example.drinkwatch.ui.theme.DrinkWatchTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // AppCompat 1.7.x omits setViewTreeNavigationEventDispatcherOwner from its
+        // setContentView override; calling initializeViewTreeOwners() explicitly before
+        // setContent ensures Navigation 3's NavDisplay can resolve the owner. Fixed in
+        // AppCompat 1.8.0 — remove this call once that version is stable.
+        initializeViewTreeOwners()
         enableEdgeToEdge()
         setContent {
             val app = application as DrinkWatchApplication
