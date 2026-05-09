@@ -3,6 +3,7 @@ package com.example.drinkwatch.ui.dialog
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocalBar
 import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -31,7 +32,7 @@ fun GlassNumberPickerDialog(
         onDismissRequest = onDismiss,
         icon = {
             Icon(
-                Icons.Filled.SportsBar,
+                Icons.Filled.LocalBar,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(32.dp),

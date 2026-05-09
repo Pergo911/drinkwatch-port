@@ -2,6 +2,11 @@ package com.example.drinkwatch.ui.dialog
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,6 +23,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +32,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
@@ -34,15 +44,18 @@ import androidx.compose.material.icons.filled.LocalDrink
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -57,6 +70,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -147,80 +161,78 @@ fun OrderDialogContent(
     ) {
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(if (step == Step.DRINK) "Add Drink" else "Choose Glass")
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        if (step == Step.GLASS) step = Step.DRINK else animatedDismiss()
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                ),
-            )
-        },
-        bottomBar = {
-            when (step) {
-                Step.DRINK ->
-                    Button(
-                        onClick = { step = Step.GLASS },
-                        enabled = selectedDrink != null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                    ) { Text("Next") }
-
-                Step.GLASS ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                    ) {
-                        Button(
-                            onClick = {
-                                mainVm.addToQueue(
-                                    playerId,
-                                    selectedDrink!!.id,
-                                    selectedGlassGroup,
-                                    if (selectedGlassGroup != null) selectedGlassNumber else null,
+            Column {
+                TopAppBar(
+                    title = {
+                        Text(if (step == Step.DRINK) "Select Drink" else "Select Glass")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            if (step == Step.GLASS) step = Step.DRINK else animatedDismiss()
+                        }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
+                    },
+                    actions = {
+                        when (step) {
+                            Step.DRINK ->
+                                IconButton(
+                                    onClick = { step = Step.GLASS },
+                                    enabled = selectedDrink != null,
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.ArrowForward,
+                                        contentDescription = "Next",
+                                    )
+                                }
+                            Step.GLASS ->
+                                QueueSplitButton(
+                                    onQueue = {
+                                        mainVm.addToQueue(
+                                            playerId,
+                                            selectedDrink!!.id,
+                                            selectedGlassGroup,
+                                            if (selectedGlassGroup != null) selectedGlassNumber else null,
+                                        )
+                                        animatedDismiss()
+                                    },
+                                    onConfirmNow = {
+                                        mainVm.commitOrderNow(
+                                            playerId,
+                                            selectedDrink!!.id,
+                                            selectedGlassGroup,
+                                            if (selectedGlassGroup != null) selectedGlassNumber else null,
+                                        )
+                                        animatedDismiss()
+                                    },
+                                    enabled = canConfirm,
                                 )
-                                animatedDismiss()
-                            },
-                            enabled = canConfirm,
-                            modifier = Modifier.weight(1f),
-                        ) { Text("Queue") }
-                        OutlinedButton(
-                            onClick = {
-                                mainVm.commitOrderNow(
-                                    playerId,
-                                    selectedDrink!!.id,
-                                    selectedGlassGroup,
-                                    if (selectedGlassGroup != null) selectedGlassNumber else null,
-                                )
-                                animatedDismiss()
-                            },
-                            enabled = canConfirm,
-                        ) { Text("Confirm Now") }
-                    }
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+                )
+                StepProgressBar(step = step)
             }
-        }
+        },
     ) { innerPadding ->
         when (step) {
             Step.DRINK ->
                 DrinkPickerContent(
                     drinks = drinks,
                     selectedDrinkId = selectedDrinkId,
-                    onSelectDrink = { selectedDrinkId = it },
+                    onSelectDrink = { id ->
+                        selectedDrinkId = id
+                        selectedGlassGroup = null
+                        selectedGlassNumber = 1
+                        step = Step.GLASS
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding),
@@ -436,6 +448,8 @@ private fun GlassPickerContent(
             }
         }
 
+        Text("Glass Number", style = MaterialTheme.typography.labelMedium)
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -482,5 +496,141 @@ private fun GlassPickerContent(
                 showGlassPickerDialog = false
             },
         )
+    }
+}
+
+// ── Step progress indicator ───────────────────────────────────────────────────
+
+@Composable
+private fun StepProgressBar(step: Step, modifier: Modifier = Modifier) {
+    val progress by animateFloatAsState(
+        targetValue = if (step == Step.DRINK) 0.5f else 1f,
+        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+        label = "stepProgress",
+    )
+    Column(modifier = modifier) {
+        Text(
+            text = "Step ${if (step == Step.DRINK) 1 else 2} / 2",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(end = Dimens.ScreenHorizontalPadding, top = 4.dp, bottom = 4.dp),
+        )
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+// ── Split button (Step 2 action) ──────────────────────────────────────────────
+
+@Composable
+private fun QueueSplitButton(
+    onQueue: () -> Unit,
+    onConfirmNow: () -> Unit,
+    enabled: Boolean,
+) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(enabled) {
+        if (!enabled) menuExpanded = false
+    }
+
+    // Leading button inner (right) corners: 4dp (closed, unified-pill) → 12dp (open).
+    val leadingEndCorner by animateDpAsState(
+        targetValue = if (menuExpanded) 12.dp else 4.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "leadingEndCorner",
+    )
+    // Trailing button inner (left) corners: 4dp (closed, matches leading) → 20dp (open = full circle).
+    val trailingStartCorner by animateDpAsState(
+        targetValue = if (menuExpanded) 20.dp else 4.dp,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "trailingStartCorner",
+    )
+    val chevronRotation by animateFloatAsState(
+        targetValue = if (menuExpanded) 180f else 0f,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow, dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "chevronRotation",
+    )
+
+    val trailingContainerColor = if (enabled) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+    }
+    val trailingContentColor = if (enabled) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        modifier = Modifier.padding(end = 8.dp),
+    ) {
+        Button(
+            onClick = onQueue,
+            enabled = enabled,
+            modifier = Modifier.height(40.dp),
+            shape = RoundedCornerShape(
+                topStart = 20.dp,
+                topEnd = leadingEndCorner,
+                bottomEnd = leadingEndCorner,
+                bottomStart = 20.dp,
+            ),
+            contentPadding = PaddingValues(start = 16.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.PlaylistAdd,
+                contentDescription = null,
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+            )
+            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+            Text("Queue")
+        }
+        // Wrap trailing button + menu in its own Box so the dropdown anchors below
+        // the trailing button, not the entire split button group.
+        // Use Surface instead of Button so we have full control over size
+        // (Button has an internal defaultMinSize of 58dp that can't be overridden).
+        Box {
+            Surface(
+                onClick = { menuExpanded = !menuExpanded },
+                enabled = enabled,
+                // Closed: 4dp inner corners match leading → reads as one pill.
+                // Open: 20dp on all corners → full circle.
+                shape = RoundedCornerShape(
+                    topStart = trailingStartCorner,
+                    topEnd = 20.dp,
+                    bottomEnd = 20.dp,
+                    bottomStart = trailingStartCorner,
+                ),
+                color = trailingContainerColor,
+                contentColor = trailingContentColor,
+                modifier = Modifier.size(40.dp),
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        Icons.Filled.ArrowDropDown,
+                        contentDescription = "More actions",
+                        modifier = Modifier.size(22.dp).rotate(chevronRotation),
+                    )
+                }
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+                shape = MaterialTheme.shapes.large,
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Confirm Now") },
+                    onClick = { menuExpanded = false; onConfirmNow() },
+                    leadingIcon = { Icon(Icons.Filled.Bolt, contentDescription = null) },
+                    enabled = enabled,
+                )
+            }
+        }
     }
 }
