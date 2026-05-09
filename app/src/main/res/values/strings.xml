@@ -65,7 +65,7 @@
 
     <!-- Timeout dialog -->
     <string name="timeout_dialog_title">Set Timeout</string>
-    <string name="timeout_dialog_confirm">Set Timeout</string>
+    <string name="timeout_dialog_confirm">Ok</string>
 
     <!-- Return glass dialog -->
     <string name="return_glass_dialog_title">Return Glass?</string>
@@ -75,7 +75,7 @@
     <string name="highlight_dialog_title">Active Drink Highlight</string>
     <string name="highlight_dialog_threshold_label">Threshold</string>
     <string name="highlight_dialog_error">Must be ≥ 1</string>
-    <string name="highlight_dialog_supporting">Highlight players with ≥ %1$d active drinks</string>
+    <string name="highlight_dialog_supporting">Highlight players red with ≥ %1$d active drinks</string>
 
     <!-- Glass number picker dialog -->
     <string name="glass_number_dialog_title">Select Glass Number</string>
@@ -87,7 +87,7 @@
     <string name="order_dialog_glass_none">None</string>
     <string name="order_dialog_glass_number_label">Glass Number</string>
     <string name="order_dialog_glass_hash">Glass #</string>
-    <string name="order_dialog_glass_taken">Glass %1$d is already taken.</string>
+    <string name="order_dialog_glass_taken">Selected glass is already taken.</string>
     <string name="order_dialog_step_progress">Step %1$d / 2</string>
     <string name="order_dialog_glass_group">Group %1$s</string>
 
@@ -109,7 +109,7 @@
     <string name="settings_highlight_title">Active drink highlight</string>
     <string name="settings_highlight_subtitle">Highlight players with this many or more active drinks</string>
     <string name="settings_timeout_title">Default timeout</string>
-    <string name="settings_timeout_subtitle">Duration applied when timing out a player</string>
+    <string name="settings_timeout_subtitle">Duration preselected when timing out a player</string>
 
     <!-- Session overview / management -->
     <string name="session_name_label">Session Name</string>
@@ -194,7 +194,7 @@
 
     <!-- Plural: queue send button -->
     <plurals name="queue_send_orders">
-        <item quantity="one">Send %1$d order</item>
-        <item quantity="other">Send %1$d orders</item>
+        <item quantity="one">Send (%1$d)</item>
+        <item quantity="other">Send (%1$d)</item>
     </plurals>
 </resources>

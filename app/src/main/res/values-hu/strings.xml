@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bottom navigation tabs -->
+    <string name="tab_session">Session</string>
+    <string name="tab_order">Rendelés</string>
+    <string name="tab_glasses">Poharak</string>
+
+    <!-- Session screen tabs -->
+    <string name="session_tab_overview">Áttekintés</string>
+    <string name="session_tab_players">Játékosok</string>
+    <string name="session_tab_drinks">Italok</string>
+    <string name="session_tab_glasses">Poharak</string>
+
+    <!-- Common buttons -->
+    <string name="btn_cancel">Mégsem</string>
+    <string name="btn_save">Mentés</string>
+    <string name="btn_delete">Törlés</string>
+    <string name="btn_return">Visszahoz</string>
+    <string name="btn_replace">Csere</string>
+    <string name="btn_continue">Folytatás</string>
+    <string name="btn_create">Létrehozás</string>
+    <string name="btn_set">Beállítás</string>
+    <string name="btn_select">Kiválasztás</string>
+    <string name="btn_queue">Queue</string>
+    <string name="btn_confirm_now">Hozzáadás most</string>
+    <string name="btn_clear_timeout">Timeout törlése</string>
+    <string name="btn_timeout">Timeout</string>
+    <string name="btn_drink">Ital</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_settings">Beállítások</string>
+    <string name="cd_back">Vissza</string>
+    <string name="cd_next">Tovább</string>
+    <string name="cd_clear_search">Keresés törlése</string>
+    <string name="cd_close_search">Keresés bezárása</string>
+    <string name="cd_cancel_queued_order">Sorba állított rendelés törlése</string>
+    <string name="cd_return_glass">Pohár vissza</string>
+    <string name="cd_add_player">Játékos hozzáadása</string>
+    <string name="cd_add_drink">Ital hozzáadása</string>
+    <string name="cd_edit_player">Játékos szerkesztése</string>
+    <string name="cd_delete_player">Játékos törlése</string>
+    <string name="cd_delete_drink">Ital törlése</string>
+    <string name="cd_more_actions">További műveletek</string>
+    <string name="cd_change_glass_number">Pohárszám módosítása</string>
+    <string name="cd_expand">Kibont</string>
+    <string name="cd_collapse">Becsuk</string>
+
+    <!-- Search fields -->
+    <string name="search_players_placeholder">Játékosok keresése\u2026</string>
+    <string name="search_drinks_placeholder">Italok keresése\u2026</string>
+
+    <!-- Empty states -->
+    <string name="empty_no_players_yet">Még nincsenek játékosok</string>
+    <string name="empty_add_players_hint">Játékosokat a Session → Játékosok fülön adhatsz hozzá.</string>
+    <string name="empty_no_drinks_yet">Még nincsenek italok</string>
+    <string name="empty_all_glasses_returned">Nincs kint pohár</string>
+    <string name="empty_no_history">Nincs előzmény.</string>
+    <string name="empty_no_active_session">Nincs aktív session</string>
+    <string name="empty_no_drinks_configured">Nincsenek italok beállítva. Adj hozzá italokat a Session beállításoknál.</string>
+    <string name="empty_player_not_available">A játékos már nem érhető el.</string>
+
+    <!-- Player status -->
+    <string name="player_status_disabled">Kikapcsolva</string>
+
+    <!-- Timeout dialog -->
+    <string name="timeout_dialog_title">Timeout beállítása</string>
+    <string name="timeout_dialog_confirm">Ok</string>
+
+    <!-- Return glass dialog -->
+    <string name="return_glass_dialog_title">Visszahozta a poharat?</string>
+    <string name="return_glass_dialog_text">%2$s visszahozta a %1$s poharat?</string>
+
+    <!-- Highlight threshold dialog -->
+    <string name="highlight_dialog_title">Aktív italok jelzés</string>
+    <string name="highlight_dialog_threshold_label">Küszöbérték</string>
+    <string name="highlight_dialog_error">Legalább 1 legyen</string>
+    <string name="highlight_dialog_supporting">Pirossal kiemeli az összes legalább %1$d aktív itallal rendelkező játékost</string>
+
+    <!-- Glass number picker dialog -->
+    <string name="glass_number_dialog_title">Pohárszám</string>
+
+    <!-- Order dialog -->
+    <string name="order_dialog_step_drink">Ital</string>
+    <string name="order_dialog_step_glass">Pohár</string>
+    <string name="order_dialog_glass_group_label">Pohár csoport</string>
+    <string name="order_dialog_glass_none">Nincs</string>
+    <string name="order_dialog_glass_number_label">Pohárszám</string>
+    <string name="order_dialog_glass_hash">Pohár #</string>
+    <string name="order_dialog_glass_taken">A kiválasztott pohár már kint van.</string>
+    <string name="order_dialog_step_progress">%1$d / 2 lépés</string>
+    <string name="order_dialog_glass_group">%1$s csop.</string>
+
+    <!-- Drink types -->
+    <string name="drink_type_shot">Rövidital</string>
+    <string name="drink_type_long_drink">Hosszú ital</string>
+    <string name="drink_type_non_alcoholic">Mentes</string>
+    <string name="drink_type_shots_header">Röviditalok</string>
+    <string name="drink_type_long_drinks_header">Hosszú italok</string>
+    <string name="drink_type_non_alcoholic_header">Mentes italok</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Beállítások</string>
+    <string name="settings_appearance">Megjelenés</string>
+    <string name="settings_theme_light">Világos</string>
+    <string name="settings_theme_system">Rendszer</string>
+    <string name="settings_theme_dark">Sötét</string>
+    <string name="settings_gameplay">Játékmenet</string>
+    <string name="settings_highlight_title">Aktív ital kiemelés</string>
+    <string name="settings_highlight_subtitle">Kijelzi azokat a játékosokat, akiknek ennyi vagy több aktív itala van</string>
+    <string name="settings_timeout_title">Alapértelmezett timeout</string>
+    <string name="settings_timeout_subtitle">Timeoutkor kiválasztásakor elsőre megjelenő érték</string>
+
+    <!-- Session overview / management -->
+    <string name="session_name_label">Session neve</string>
+    <string name="session_create_new">Új session létrehozása</string>
+    <string name="session_import_from_file">Import fájlba</string>
+    <string name="session_export_to_file">Export fájlba</string>
+    <string name="session_start_new">Új session</string>
+    <string name="session_create_dialog_label">Session neve</string>
+
+    <!-- Replace / new session confirmation dialogs -->
+    <string name="dialog_replace_session_title">Felülírod a jelenlegi sessiont?</string>
+    <string name="dialog_replace_session_text">Az importálás véglegesen felülírja a jelenlegi sessiont és az összes adatát.</string>
+    <string name="dialog_new_session_title">Új session indítása?</string>
+    <string name="dialog_new_session_text">Az összes jelenlegi session-adat véglegesen törlésre kerül.</string>
+
+    <!-- Player dialog -->
+    <string name="player_dialog_title_add">Játékos hozzáadása</string>
+    <string name="player_dialog_title_edit">Játékos szerkesztése • %1$s</string>
+    <string name="player_field_name">Név *</string>
+    <string name="player_field_phone">Telefon</string>
+    <string name="player_field_note">Megjegyzés</string>
+    <string name="player_dialog_delete_title">Törlöd a játékost?</string>
+    <string name="player_dialog_delete_text">Ez véglegesen eltávolítja a következőt és eseményelőzményeit: %1$s</string>
+
+    <!-- Drink dialog -->
+    <string name="drink_dialog_title_add">Ital hozzáadása</string>
+    <string name="drink_dialog_title_edit">Ital szerkesztése • %1$s</string>
+    <string name="drink_field_name">Név *</string>
+    <string name="drink_type_label">Típus</string>
+    <string name="drink_dialog_delete_title">Törlöd az italt?</string>
+    <string name="drink_dialog_delete_text">Ez véglegesen eltávolítja a következőt: %1$s</string>
+
+    <!-- Glass group label -->
+    <string name="glass_group_label">%1$s csop.</string>
+
+    <!-- Player detail screen -->
+    <string name="player_detail_title">Játékos részletei</string>
+    <string name="player_info_section">Infó</string>
+    <string name="player_stat_active_drinks">Aktív italok</string>
+    <string name="player_stat_timeout">Timeout</string>
+    <string name="player_stat_glasses_out">Kint lévő poharak</string>
+    <string name="player_stat_total_drinks">Összes ital</string>
+    <string name="player_stat_total_timeout">Összes timeout</string>
+
+    <!-- Player history tables -->
+    <string name="player_history_drinks_title">Italok</string>
+    <string name="player_history_col_time">Idő</string>
+    <string name="player_history_col_drink">Ital</string>
+    <string name="player_history_col_glass">Pohár</string>
+    <string name="player_history_timeouts_title">Timeoutok</string>
+    <string name="player_history_col_duration">Időtartam</string>
+    <string name="player_history_timeout_cancelled">Visszavonva</string>
+    <string name="player_history_glass_out">%1$s (kint)</string>
+
+    <!-- Duration picker -->
+    <string name="duration_picker_hours">Óra</string>
+    <string name="duration_picker_minutes">Perc</string>
+
+    <!-- Duration format: %1$d = hours, %2$d = minutes -->
+    <string name="duration_format">%1$dó %2$dp</string>
+
+    <!-- Search result empty states -->
+    <string name="no_players_match">Nincs „%1$s" nevű játékos</string>
+    <string name="no_drinks_match">Nincs „%1$s" nevű ital</string>
+
+    <!-- Error messages -->
+    <string name="error_glass_taken">Ez a pohár már kint van.</string>
+    <string name="error_file_open">Nem sikerült megnyitni a kiválasztott fájlt.</string>
+    <string name="error_export_failed">Exportálás sikertelen.</string>
+    <string name="error_import_invalid">Importálás sikertelen: érvénytelen vagy sérült fájl.</string>
+    <string name="error_import_failed">Importálás sikertelen.</string>
+
+    <!-- Order queue -->
+    <string name="order_queue_blocked">Először töröld vagy véglegesítsd a queue-t.</string>
+
+    <!-- Language picker -->
+    <string name="settings_theme_label">Téma</string>
+    <string name="settings_language_title">Nyelv</string>
+    <string name="settings_language_system">Rendszer</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_hungarian">Magyar</string>
+
+    <!-- Plural: queue send button -->
+    <plurals name="queue_send_orders">
+        <item quantity="one">Mehet (%1$d)</item>
+        <item quantity="other">Mehet (%1$d)</item>
+    </plurals>
+</resources>
