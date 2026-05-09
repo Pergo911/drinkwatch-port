@@ -1,5 +1,6 @@
 package com.example.drinkwatch.ui.component
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -126,12 +128,26 @@ internal fun WheelPicker(
     // can scroll to the center position. firstVisibleItemIndex then maps
     // directly to items[firstVisibleItemIndex].
     val paddedItems = remember(items) { listOf("") + items + listOf("") }
+    val view = LocalView.current
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.isScrollInProgress }
             .filter { !it }
             .drop(1) // skip initial false emission at first composition
             .collect { onIndexChange(listState.firstVisibleItemIndex) }
+    }
+
+    // Fire a haptic tick each time a new item scrolls into the center position.
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            if (listState.firstVisibleItemScrollOffset >= halfItemHeightPx) {
+                listState.firstVisibleItemIndex + 2
+            } else {
+                listState.firstVisibleItemIndex + 1
+            }
+        }
+            .drop(1) // skip emission on first composition
+            .collect { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK) }
     }
 
     Box(modifier = modifier.height(ItemHeight * 3)) {
