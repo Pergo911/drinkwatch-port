@@ -153,6 +153,7 @@ fun OrderTab(
                                     }
                                 },
                                 onTimeout = { timeoutDialogPlayerId = uiState.derived.player.id },
+                                onClearTimeout = { onStartTimeout(uiState.derived.player.id, 0) },
                                 onCardClick = { onNavigateToPlayerDetail(uiState.derived.player.id) },
                                 onCancelOrder = { onCancelQueuedOrder(uiState.derived.player.id) },
                             )

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Liquor
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.TimerOff
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
@@ -45,6 +46,7 @@ fun PlayerCard(
     activeDrinkHighlight: Int,
     onAddDrink: () -> Unit,
     onTimeout: () -> Unit,
+    onClearTimeout: () -> Unit,
     onCardClick: () -> Unit,
     onCancelOrder: () -> Unit,
     modifier: Modifier = Modifier,
@@ -162,17 +164,31 @@ fun PlayerCard(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                     ) {
-                        OutlinedButton(
-                            onClick = onTimeout,
-                            enabled = !player.isDisabled,
-                        ) {
-                            Icon(
-                                Icons.Filled.Timer,
-                                contentDescription = null,
-                                modifier = Modifier.size(ButtonDefaults.IconSize),
-                            )
-                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                            Text("Timeout")
+                        if (isTimeout) {
+                            OutlinedButton(
+                                onClick = onClearTimeout,
+                            ) {
+                                Icon(
+                                    Icons.Filled.TimerOff,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                                )
+                                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                                Text("Clear Timeout")
+                            }
+                        } else {
+                            OutlinedButton(
+                                onClick = onTimeout,
+                                enabled = !player.isDisabled,
+                            ) {
+                                Icon(
+                                    Icons.Filled.Timer,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                                )
+                                Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                                Text("Timeout")
+                            }
                         }
                         Button(
                             onClick = onAddDrink,
