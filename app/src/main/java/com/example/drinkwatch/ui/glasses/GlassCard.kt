@@ -44,7 +44,7 @@ fun GlassCard(
             Icon(
                 imageVector = Icons.Filled.LocalBar,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(24.dp),
             )
 
@@ -56,14 +56,14 @@ fun GlassCard(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.tertiaryContainer),
+                    .background(MaterialTheme.colorScheme.primaryContainer),
             ) {
 
                 Text(
                     text = "${uiState.glassGroup}${uiState.glassNumber}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
 
@@ -84,7 +84,7 @@ fun GlassCard(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Undo,
                 contentDescription = "Return glass",
-                tint = MaterialTheme.colorScheme.tertiary,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(20.dp),
             )
         }

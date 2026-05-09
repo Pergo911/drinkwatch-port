@@ -1,5 +1,6 @@
 package com.example.drinkwatch.ui.component
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -30,6 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -120,16 +123,31 @@ internal fun WheelPicker(
         initialFirstVisibleItemIndex = initialIndex.coerceIn(0, items.lastIndex),
     )
     val flingBehavior = rememberSnapFlingBehavior(listState)
+    val halfItemHeightPx = with(LocalDensity.current) { ItemHeight.toPx() / 2f }
     // Pad with one empty slot on each end so items[0] and items[last]
     // can scroll to the center position. firstVisibleItemIndex then maps
     // directly to items[firstVisibleItemIndex].
     val paddedItems = remember(items) { listOf("") + items + listOf("") }
+    val view = LocalView.current
 
     LaunchedEffect(listState) {
         snapshotFlow { listState.isScrollInProgress }
             .filter { !it }
             .drop(1) // skip initial false emission at first composition
             .collect { onIndexChange(listState.firstVisibleItemIndex) }
+    }
+
+    // Fire a haptic tick each time a new item scrolls into the center position.
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            if (listState.firstVisibleItemScrollOffset >= halfItemHeightPx) {
+                listState.firstVisibleItemIndex + 2
+            } else {
+                listState.firstVisibleItemIndex + 1
+            }
+        }
+            .drop(1) // skip emission on first composition
+            .collect { view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK) }
     }
 
     Box(modifier = modifier.height(ItemHeight * 3)) {
@@ -154,7 +172,15 @@ internal fun WheelPicker(
                 // actually changes (prev center → not, new center → yes) recompose
                 // when firstVisibleItemIndex updates.
                 val isCenter by remember {
-                    derivedStateOf { paddedIndex == listState.firstVisibleItemIndex + 1 }
+                    derivedStateOf {
+                        val centerIndex =
+                            if (listState.firstVisibleItemScrollOffset >= halfItemHeightPx) {
+                                listState.firstVisibleItemIndex + 2
+                            } else {
+                                listState.firstVisibleItemIndex + 1
+                            }
+                        paddedIndex == centerIndex
+                    }
                 }
                 Box(
                     contentAlignment = Alignment.Center,

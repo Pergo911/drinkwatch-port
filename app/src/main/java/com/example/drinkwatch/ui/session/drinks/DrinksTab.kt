@@ -1,6 +1,7 @@
 package com.example.drinkwatch.ui.session.drinks
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,24 +13,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Liquor
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocalDrink
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SportsBar
-import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,17 +44,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
+import com.example.drinkwatch.ui.component.SearchField
+import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.SessionViewModel
 
 @Composable
-fun DrinksTab(viewModel: SessionViewModel) {
+fun DrinksTab(viewModel: SessionViewModel, isActive: Boolean = true) {
     val drinks by viewModel.drinks.collectAsStateWithLifecycle()
     var showAddDialog by remember { mutableStateOf(false) }
     var editingDrink by remember { mutableStateOf<Drink?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
+    var isSearchExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isActive) {
+        if (!isActive) {
+            isSearchExpanded = false
+            searchQuery = ""
+        }
+    }
+
+    val filteredDrinks = remember(drinks, searchQuery) {
+        if (searchQuery.isBlank()) drinks
+        else drinks.filter { it.name.contains(searchQuery, ignoreCase = true) }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (drinks.isEmpty()) {
@@ -74,16 +96,67 @@ fun DrinksTab(viewModel: SessionViewModel) {
                 )
             }
         } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(drinks, key = { it.id }) { drink ->
-                    DrinkListItem(
-                        drink = drink,
-                        onEdit = { editingDrink = drink },
-                    )
+            Column(modifier = Modifier.fillMaxSize()) {
+                SearchField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = "Search drinks…",
+                    expanded = isSearchExpanded,
+                    onExpand = { isSearchExpanded = true },
+                    onCollapse = { isSearchExpanded = false; searchQuery = "" },
+                    collapsedHorizontalPadding = Dimens.DetailHorizontalPadding,
+                    collapsedVerticalPadding = Dimens.ScreenVerticalPadding,
+                    trailingIcon = if (searchQuery.isNotEmpty()) {
+                        {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Clear,
+                                    contentDescription = "Clear search",
+                                )
+                            }
+                        }
+                    } else null,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (filteredDrinks.isEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = Dimens.FabClearance),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Text(
+                            text = "No drinks match \"$searchQuery\"",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            start = Dimens.DetailHorizontalPadding,
+                            end = Dimens.DetailHorizontalPadding,
+                            top = 4.dp,
+                            bottom = Dimens.FabClearance
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(filteredDrinks, key = { it.id }) { drink ->
+                            DrinkListItem(
+                                drink = drink,
+                                onEdit = { editingDrink = drink },
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -91,7 +164,7 @@ fun DrinksTab(viewModel: SessionViewModel) {
             onClick = { showAddDialog = true },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp),
+                .padding(28.dp),
         ) {
             Icon(Icons.Filled.Add, contentDescription = "Add Drink")
         }
@@ -100,7 +173,7 @@ fun DrinksTab(viewModel: SessionViewModel) {
     if (showAddDialog) {
         DrinkDialog(
             drink = null,
-            onSave = { name, type ->
+            onSave = { name, type, _ ->
                 viewModel.addDrink(name, type)
                 showAddDialog = false
             },
@@ -112,16 +185,12 @@ fun DrinksTab(viewModel: SessionViewModel) {
     editingDrink?.let { drink ->
         DrinkDialog(
             drink = drink,
-            onSave = { name, type ->
-                viewModel.updateDrink(drink.copy(name = name, type = type))
+            onSave = { name, type, isDisabled ->
+                viewModel.saveDrink(drink, name, type, isDisabled)
                 editingDrink = null
             },
             onDelete = {
                 viewModel.deleteDrink(drink)
-                editingDrink = null
-            },
-            onToggleDisabled = {
-                if (drink.isDisabled) viewModel.enableDrink(drink) else viewModel.disableDrink(drink)
                 editingDrink = null
             },
             onDismiss = { editingDrink = null },
@@ -130,8 +199,8 @@ fun DrinksTab(viewModel: SessionViewModel) {
 }
 
 private fun drinkTypeIcon(type: DrinkType): ImageVector = when (type) {
-    DrinkType.SHOT          -> Icons.Filled.LocalDrink
-    DrinkType.LONG_DRINK    -> Icons.Filled.SportsBar
+    DrinkType.SHOT -> Icons.Filled.LocalDrink
+    DrinkType.LONG_DRINK -> Icons.Filled.SportsBar
     DrinkType.NON_ALCOHOLIC -> Icons.Filled.LocalCafe
 }
 
@@ -140,59 +209,64 @@ private fun DrinkListItem(
     drink: Drink,
     onEdit: () -> Unit,
 ) {
-    Card(
-        onClick = onEdit,
-        modifier = Modifier.fillMaxWidth().alpha(if (drink.isDisabled) 0.38f else 1f),
+    Row(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .fillMaxWidth()
+            .clickable(onClick = onEdit)
+            .padding(vertical = 10.dp)
+            .alpha(if (drink.isDisabled) 0.5f else 1.0f),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
+        Spacer(Modifier.width(8.dp))
+
+        // Drink type icon circle
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.secondaryContainer),
         ) {
-            // Drink type icon circle
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-            ) {
-                Icon(
-                    imageVector = drinkTypeIcon(drink.type),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier.size(22.dp),
-                )
-            }
-            Spacer(Modifier.size(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(drink.name, style = MaterialTheme.typography.bodyLarge)
-                SuggestionChip(
-                    onClick = {},
-                    label = {
-                        Text(
-                            when (drink.type) {
-                                DrinkType.SHOT -> "Shot"
-                                DrinkType.LONG_DRINK -> "Long drink"
-                                DrinkType.NON_ALCOHOLIC -> "Non-alcoholic"
-                            },
-                            style = MaterialTheme.typography.labelSmall,
-                        )
-                    },
-                    colors = SuggestionChipDefaults.suggestionChipColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
-                        labelColor     = MaterialTheme.colorScheme.onSecondaryContainer,
-                    ),
-                    modifier = Modifier.height(24.dp),
-                )
-            }
             Icon(
-                Icons.Filled.Edit,
+                imageVector = drinkTypeIcon(drink.type),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = 8.dp),
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                modifier = Modifier.size(22.dp),
             )
         }
+        Spacer(Modifier.size(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                drink.name, style = MaterialTheme.typography.bodyLarge.copy(
+                    textDecoration = if (drink.isDisabled) TextDecoration.LineThrough else null
+                )
+            )
+            SuggestionChip(
+                onClick = onEdit,
+                label = {
+                    Text(
+                        when (drink.type) {
+                            DrinkType.SHOT -> "Shot"
+                            DrinkType.LONG_DRINK -> "Long drink"
+                            DrinkType.NON_ALCOHOLIC -> "Non-alcoholic"
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                },
+                colors = SuggestionChipDefaults.suggestionChipColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                    labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                ),
+                modifier = Modifier.height(24.dp),
+            )
+        }
+        Icon(
+            Icons.Filled.Edit,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+        )
+
     }
 }

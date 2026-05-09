@@ -2,7 +2,7 @@ package com.example.drinkwatch.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// ── Light scheme tokens ──────────────────────────────────────────────────────
+// ── Accent palette ───────────────────────────────────────────────────────────
 val Blue10  = Color(0xFF001B41)
 val Blue20  = Color(0xFF002F6C)
 val Blue40  = Color(0xFF0B4DA2)
@@ -26,12 +26,25 @@ val Red40   = Color(0xFFBA1A1A)
 val Red80   = Color(0xFFFFB4AB)
 val Red90   = Color(0xFFFFDAD6)
 
+// ── Neutral palette (surface tones) ─────────────────────────────────────────
+val Neutral04  = Color(0xFF0C0F13)
+val Neutral06  = Color(0xFF111418)
 val Neutral10  = Color(0xFF191C20)
+val Neutral12  = Color(0xFF1D2024)
+val Neutral17  = Color(0xFF272B2F)
 val Neutral20  = Color(0xFF2E3135)
+val Neutral22  = Color(0xFF323539)
+val Neutral24  = Color(0xFF36393D)
+val Neutral87  = Color(0xFFD9DADF)
 val Neutral90  = Color(0xFFE1E2E8)
+val Neutral92  = Color(0xFFE7E8EE)
+val Neutral94  = Color(0xFFECEDF4)
 val Neutral95  = Color(0xFFEFF0F7)
+val Neutral96  = Color(0xFFF1F3F9)
 val Neutral99  = Color(0xFFF8FAFE)
+val Neutral100 = Color(0xFFFFFFFF)
 
+// ── Neutral-variant palette (outline / surface-variant tones) ────────────────
 val NeutralVar30 = Color(0xFF41484F)
 val NeutralVar50 = Color(0xFF72787F)
 val NeutralVar80 = Color(0xFFC1C7CE)

@@ -2,6 +2,13 @@ package com.example.drinkwatch.ui.main
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -15,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,19 +49,23 @@ fun MainScreen(
     )
 
     val sessionName           by viewModel.sessionName.collectAsStateWithLifecycle()
-    val sessionId             by viewModel.sessionId.collectAsStateWithLifecycle()
+    val sessionLoadState      by viewModel.sessionLoadState.collectAsStateWithLifecycle()
     val takenGlasses          by viewModel.takenGlasses.collectAsStateWithLifecycle()
     val playerUiStates        by viewModel.playerUiStates.collectAsStateWithLifecycle()
     val activeDrinkHighlight  by viewModel.activeDrinkHighlight.collectAsStateWithLifecycle()
     val defaultTimeoutSeconds by viewModel.defaultTimeoutSeconds.collectAsStateWithLifecycle()
     val queue                 by viewModel.queue.collectAsStateWithLifecycle()
 
-    val hasSession = sessionId != null
+    // Derive hasSession from the single sessionLoadState so that "ready?" and "session exists?"
+    // always reflect the same upstream emission and can never be observed out of sync.
+    val hasSession = (sessionLoadState as? MainViewModel.SessionLoadState.Loaded)?.sessionId != null
 
-    // Default to SESSION when there is no active session, ORDER when one exists.
-    // Key by sessionId so the tab resets whenever the session is replaced.
-    var selectedTab by rememberSaveable(sessionId, stateSaver = MainTabSaver) {
-        mutableStateOf(if (hasSession) MainTab.ORDER else MainTab.SESSION)
+    // Default to ORDER.  Only switch to SESSION once sessionLoadState is Loaded *and* there is
+    // no active session.  Keyed by sessionLoadState so the state reinitialises correctly when
+    // the session changes — both conditions come from the same atomic value, preventing jerk.
+    var selectedTab by rememberSaveable(sessionLoadState, stateSaver = MainTabSaver) {
+        val loaded = sessionLoadState as? MainViewModel.SessionLoadState.Loaded
+        mutableStateOf(if (loaded != null && loaded.sessionId == null) MainTab.SESSION else MainTab.ORDER)
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -71,7 +83,6 @@ fun MainScreen(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                sessionName = sessionName,
                 onSettingsClick = onNavigateToSettings,
             )
         },
@@ -85,42 +96,50 @@ fun MainScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
-        when (selectedTab) {
-            MainTab.SESSION ->
-                SessionTab(
-                    onShowSnackbar = { msg ->
-                        coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
-            MainTab.ORDER ->
-                OrderTab(
-                    playerUiStates = playerUiStates,
-                    activeDrinkHighlight = activeDrinkHighlight,
-                    defaultTimeoutSeconds = defaultTimeoutSeconds,
-                    onNavigateToOrderDialog = onNavigateToOrderDialog,
-                    onNavigateToPlayerDetail = onNavigateToPlayerDetail,
-                    onStartTimeout = viewModel::startTimeout,
-                    onCancelQueuedOrder = viewModel::cancelQueuedOrder,
-                    onCommitQueue = viewModel::commitQueue,
-                    queueSize = queue.size,
-                    onShowSnackbar = { msg ->
-                        coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
-            MainTab.GLASSES ->
-                GlassesTab(
-                    takenGlasses = takenGlasses,
-                    onReturnGlass = viewModel::returnGlass,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                )
+        AnimatedContent(
+            targetState = selectedTab,
+            contentAlignment = Alignment.TopStart,
+            transitionSpec = {
+                val direction = if (targetState.ordinal > initialState.ordinal) 1 else -1
+                slideInHorizontally(tween(250)) { it * direction / 6 } + fadeIn(tween(250)) togetherWith
+                    slideOutHorizontally(tween(150)) { -it * direction / 6 } + fadeOut(tween(150))
+            },
+            label = "MainTabContent",
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) { tab ->
+            when (tab) {
+                MainTab.SESSION ->
+                    SessionTab(
+                        onShowSnackbar = { msg ->
+                            coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                MainTab.ORDER ->
+                    OrderTab(
+                        playerUiStates = playerUiStates,
+                        activeDrinkHighlight = activeDrinkHighlight,
+                        defaultTimeoutSeconds = defaultTimeoutSeconds,
+                        onNavigateToOrderDialog = onNavigateToOrderDialog,
+                        onNavigateToPlayerDetail = onNavigateToPlayerDetail,
+                        onStartTimeout = viewModel::startTimeout,
+                        onCancelQueuedOrder = viewModel::cancelQueuedOrder,
+                        onCommitQueue = viewModel::commitQueue,
+                        queueSize = queue.size,
+                        onShowSnackbar = { msg ->
+                            coroutineScope.launch { snackbarHostState.showSnackbar(msg) }
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                MainTab.GLASSES ->
+                    GlassesTab(
+                        takenGlasses = takenGlasses,
+                        onReturnGlass = viewModel::returnGlass,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+            }
         }
     }
 }
