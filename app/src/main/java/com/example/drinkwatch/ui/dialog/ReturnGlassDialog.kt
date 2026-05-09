@@ -11,6 +11,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.viewmodel.TakenGlassUiState
 
 @Composable
@@ -29,18 +31,21 @@ fun ReturnGlassDialog(
                 modifier = Modifier.size(32.dp),
             )
         },
-        title = { Text("Return Glass?") },
+        title = { Text(stringResource(R.string.return_glass_dialog_title)) },
         text = {
             Text(
-                "Return glass ${glass.glassGroup}${glass.glassNumber} " +
-                    "taken by ${glass.playerName}?"
+                stringResource(
+                    R.string.return_glass_dialog_text,
+                    "${glass.glassGroup}${glass.glassNumber}",
+                    glass.playerName,
+                )
             )
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Return") }
+            TextButton(onClick = onConfirm) { Text(stringResource(R.string.btn_return)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) }
         },
     )
 }

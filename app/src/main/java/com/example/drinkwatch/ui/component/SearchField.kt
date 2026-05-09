@@ -33,6 +33,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.theme.Dimens
 
 @Composable
@@ -82,7 +84,7 @@ fun SearchField(
                             IconButton(onClick = onCollapse) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Close search",
+                                    contentDescription = stringResource(R.string.cd_close_search),
                                 )
                             }
                         } else {

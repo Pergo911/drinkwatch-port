@@ -37,6 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.util.formatCountdown
 import com.example.drinkwatch.viewmodel.PlayerUiState
 
@@ -90,7 +92,7 @@ fun PlayerCard(
                     when {
                         player.isDisabled -> SuggestionChip(
                             onClick = {},
-                            label = { Text("Disabled") },
+                            label = { Text(stringResource(R.string.player_status_disabled)) },
                             colors = SuggestionChipDefaults.suggestionChipColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                             ),
@@ -174,7 +176,7 @@ fun PlayerCard(
                                     modifier = Modifier.size(ButtonDefaults.IconSize),
                                 )
                                 Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                                Text("Clear Timeout")
+                                Text(stringResource(R.string.btn_clear_timeout))
                             }
                         } else {
                             OutlinedButton(
@@ -187,7 +189,7 @@ fun PlayerCard(
                                     modifier = Modifier.size(ButtonDefaults.IconSize),
                                 )
                                 Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                                Text("Timeout")
+                                Text(stringResource(R.string.btn_timeout))
                             }
                         }
                         Button(
@@ -200,7 +202,7 @@ fun PlayerCard(
                                 modifier = Modifier.size(ButtonDefaults.IconSize),
                             )
                             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                            Text("Drink")
+                            Text(stringResource(R.string.btn_drink))
                         }
                     }
                 }

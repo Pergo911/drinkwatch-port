@@ -44,10 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.session.players.PlayerDialog
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.util.formatCountdown
@@ -77,6 +79,27 @@ fun PlayerDetailScreen(
 
     val playerName = derivedState?.player?.name ?: ""
 
+    val strPlayerDetailTitle = stringResource(R.string.player_detail_title)
+    val strBack = stringResource(R.string.cd_back)
+    val strEditPlayer = stringResource(R.string.cd_edit_player)
+    val strPlayerNotAvailable = stringResource(R.string.empty_player_not_available)
+    val strDisabled = stringResource(R.string.player_status_disabled)
+    val strInfo = stringResource(R.string.player_info_section)
+    val strActiveDrinks = stringResource(R.string.player_stat_active_drinks)
+    val strTimeout = stringResource(R.string.player_stat_timeout)
+    val strGlassesOut = stringResource(R.string.player_stat_glasses_out)
+    val strTotalDrinks = stringResource(R.string.player_stat_total_drinks)
+    val strTotalTimeout = stringResource(R.string.player_stat_total_timeout)
+    val strDrinksTitle = stringResource(R.string.player_history_drinks_title)
+    val strColTime = stringResource(R.string.player_history_col_time)
+    val strColDrink = stringResource(R.string.player_history_col_drink)
+    val strColGlass = stringResource(R.string.player_history_col_glass)
+    val strGlassOutFmt = stringResource(R.string.player_history_glass_out)
+    val strTimeoutsTitle = stringResource(R.string.player_history_timeouts_title)
+    val strColDuration = stringResource(R.string.player_history_col_duration)
+    val strCancelled = stringResource(R.string.player_history_timeout_cancelled)
+    val durationFormat = stringResource(R.string.duration_format)
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -85,7 +108,7 @@ fun PlayerDetailScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "Player Details",
+                            strPlayerDetailTitle,
                             style = MaterialTheme.typography.titleLarge
                         ); if (playerName.isNotBlank()) Text(
                         playerName,
@@ -98,7 +121,7 @@ fun PlayerDetailScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = strBack,
                         )
                     }
                 },
@@ -109,7 +132,7 @@ fun PlayerDetailScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
-                            contentDescription = "Edit player",
+                            contentDescription = strEditPlayer,
                         )
                     }
                 },
@@ -129,7 +152,7 @@ fun PlayerDetailScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Player no longer available.",
+                    text = strPlayerNotAvailable,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -224,7 +247,7 @@ fun PlayerDetailScreen(
                                     tint = MaterialTheme.colorScheme.onErrorContainer,
                                 )
                                 Text(
-                                    text = "Disabled",
+                                    text = strDisabled,
                                     style = MaterialTheme.typography.labelLarge,
                                     color = MaterialTheme.colorScheme.onErrorContainer,
                                 )
@@ -258,7 +281,7 @@ fun PlayerDetailScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Text(
-                                text = "Info",
+                                text = strInfo,
                                 style = MaterialTheme.typography.titleLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -324,14 +347,14 @@ fun PlayerDetailScreen(
                             MaterialTheme.colorScheme.secondary
 
                     StatCell(
-                        label = "Active drinks",
+                        label = strActiveDrinks,
                         value = state.activeDrinkCount.toString(),
                         valueColor = drinkHighlightColor,
                         icon = Icons.Filled.Liquor,
                         iconColor = drinkHighlightColor,
                     )
                     StatCell(
-                        label = "Timeout",
+                        label = strTimeout,
                         value = if (isUnderTimeout)
                             formatCountdown(timeoutMillisRemaining!!)
                         else
@@ -343,7 +366,7 @@ fun PlayerDetailScreen(
                             MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     StatCell(
-                        label = "Glasses out",
+                        label = strGlassesOut,
                         value = state.unreturnedGlassCount.toString(),
                         icon = Icons.Filled.LocalBar,
                         iconColor = MaterialTheme.colorScheme.tertiary,
@@ -367,14 +390,14 @@ fun PlayerDetailScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     StatCell(
-                        label = "Total drinks",
+                        label = strTotalDrinks,
                         value = state.totalDrinks.toString(),
                         icon = Icons.Filled.Liquor,
                         iconColor = MaterialTheme.colorScheme.secondary,
                     )
                     StatCell(
-                        label = "Total timeout",
-                        value = formatDuration(state.totalTimeoutSeconds),
+                        label = strTotalTimeout,
+                        value = formatDuration(state.totalTimeoutSeconds, durationFormat),
                         icon = Icons.Filled.Schedule,
                         iconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -383,15 +406,15 @@ fun PlayerDetailScreen(
 
             // ── Drink history ─────────────────────────────────────────────────
             ExpandableEventTable(
-                title = "Drinks",
-                columns = listOf("Time", "Drink", "Glass"),
+                title = strDrinksTitle,
+                columns = listOf(strColTime, strColDrink, strColGlass),
                 rows = orderHistory.map { item ->
                     listOf(
                         formatTimestamp(item.timestampMs),
                         item.drinkName,
                         if (item.glassGroup != null && item.glassNumber != null) {
                             val label = "${item.glassGroup}${item.glassNumber}"
-                            if (item.glassReturned == false) "$label (out)" else label
+                            if (item.glassReturned == false) String.format(strGlassOutFmt, label) else label
                         } else "—",
                     )
                 },
@@ -399,13 +422,13 @@ fun PlayerDetailScreen(
 
             // ── Timeout history ───────────────────────────────────────────────
             ExpandableEventTable(
-                title = "Timeouts",
-                columns = listOf("Time", "Duration"),
+                title = strTimeoutsTitle,
+                columns = listOf(strColTime, strColDuration),
                 rows = timeoutHistory.map { item ->
                     listOf(
                         formatTimestamp(item.timestampMs),
-                        if (item.durationSeconds == 0) "Cancelled"
-                        else formatDuration(item.durationSeconds),
+                        if (item.durationSeconds == 0) strCancelled
+                        else formatDuration(item.durationSeconds, durationFormat),
                     )
                 },
             )

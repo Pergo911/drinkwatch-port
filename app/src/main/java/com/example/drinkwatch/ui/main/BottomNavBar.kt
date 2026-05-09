@@ -14,6 +14,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.Saver
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 
 enum class MainTab { SESSION, ORDER, GLASSES }
 
@@ -34,7 +36,7 @@ fun MainBottomNavBar(
             selected = selectedTab == MainTab.SESSION,
             onClick = { onTabSelected(MainTab.SESSION) },
             icon = { Icon(Icons.Filled.Dataset, contentDescription = null) },
-            label = { Text("Session") },
+            label = { Text(stringResource(R.string.tab_session)) },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 selectedTextColor = MaterialTheme.colorScheme.primary,
@@ -46,7 +48,7 @@ fun MainBottomNavBar(
             onClick = { onTabSelected(MainTab.ORDER) },
             enabled = hasSession,
             icon = { Icon(Icons.Filled.Liquor, contentDescription = null) },
-            label = { Text("Order") },
+            label = { Text(stringResource(R.string.tab_order)) },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 selectedTextColor = MaterialTheme.colorScheme.primary,
@@ -68,7 +70,7 @@ fun MainBottomNavBar(
                     Icon(Icons.Filled.LocalBar, contentDescription = null)
                 }
             },
-            label = { Text("Glasses") },
+            label = { Text(stringResource(R.string.tab_glasses)) },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 selectedTextColor = MaterialTheme.colorScheme.primary,

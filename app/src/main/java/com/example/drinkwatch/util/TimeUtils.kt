@@ -20,6 +20,17 @@ fun formatDuration(totalSeconds: Int): String {
     return "${hours}h ${minutes}m"
 }
 
+/**
+ * Formats a total-seconds value using the provided locale-aware format string.
+ * The format must have two integer arguments: %1$d = hours, %2$d = minutes.
+ * Obtain the format string via stringResource(R.string.duration_format) in a composable.
+ */
+fun formatDuration(totalSeconds: Int, format: String): String {
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    return String.format(format, hours, minutes)
+}
+
 /** Formats an epoch-millisecond timestamp as "HH:mm:ss" in the device locale. */
 fun formatTimestamp(timestampMs: Long): String =
     SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(timestampMs))

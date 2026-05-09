@@ -46,6 +46,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
@@ -90,7 +92,7 @@ fun DrinksTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "No drinks yet",
+                    text = stringResource(R.string.empty_no_drinks_yet),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -100,7 +102,7 @@ fun DrinksTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                 SearchField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = "Search drinks…",
+                    placeholder = stringResource(R.string.search_drinks_placeholder),
                     expanded = isSearchExpanded,
                     onExpand = { isSearchExpanded = true },
                     onCollapse = { isSearchExpanded = false; searchQuery = "" },
@@ -111,7 +113,7 @@ fun DrinksTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
-                                    contentDescription = "Clear search",
+                                    contentDescription = stringResource(R.string.cd_clear_search),
                                 )
                             }
                         }
@@ -134,7 +136,7 @@ fun DrinksTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                         )
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "No drinks match \"$searchQuery\"",
+                            text = stringResource(R.string.no_drinks_match, searchQuery),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -166,7 +168,7 @@ fun DrinksTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                 .align(Alignment.BottomEnd)
                 .padding(28.dp),
         ) {
-            Icon(Icons.Filled.Add, contentDescription = "Add Drink")
+            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.cd_add_drink))
         }
     }
 
@@ -247,9 +249,9 @@ private fun DrinkListItem(
                 label = {
                     Text(
                         when (drink.type) {
-                            DrinkType.SHOT -> "Shot"
-                            DrinkType.LONG_DRINK -> "Long drink"
-                            DrinkType.NON_ALCOHOLIC -> "Non-alcoholic"
+                            DrinkType.SHOT -> stringResource(R.string.drink_type_shot)
+                            DrinkType.LONG_DRINK -> stringResource(R.string.drink_type_long_drink)
+                            DrinkType.NON_ALCOHOLIC -> stringResource(R.string.drink_type_non_alcoholic)
                         },
                         style = MaterialTheme.typography.labelSmall,
                     )

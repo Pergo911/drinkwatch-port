@@ -39,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.data.model.Player
 import com.example.drinkwatch.ui.theme.Dimens
 import kotlinx.coroutines.launch
@@ -82,7 +84,7 @@ fun PlayerDialog(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = if (player != null) "Edit Player • ${player.name}" else "Add Player",
+                text = if (player != null) stringResource(R.string.player_dialog_title_edit, player.name) else stringResource(R.string.player_dialog_title_add),
                 style = MaterialTheme.typography.titleLarge,
             )
             Row(
@@ -98,7 +100,7 @@ fun PlayerDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name *") },
+                    label = { Text(stringResource(R.string.player_field_name)) },
                     singleLine = true,
                     modifier = Modifier.weight(1f),
                 )
@@ -116,7 +118,7 @@ fun PlayerDialog(
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phone = it },
-                    label = { Text("Phone") },
+                    label = { Text(stringResource(R.string.player_field_phone)) },
                     singleLine = true,
                     modifier = Modifier.weight(1f),
                 )
@@ -124,7 +126,7 @@ fun PlayerDialog(
             OutlinedTextField(
                 value = note,
                 onValueChange = { note = it },
-                label = { Text("Note") },
+                label = { Text(stringResource(R.string.player_field_note)) },
                 minLines = 3,
                 maxLines = 5,
                 modifier = Modifier.fillMaxWidth(),
@@ -144,7 +146,7 @@ fun PlayerDialog(
 
                 ) {
                     Text(
-                        text = "Disabled",
+                        text = stringResource(R.string.player_status_disabled),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f).padding(start = 8.dp),
                     )
@@ -168,11 +170,11 @@ fun PlayerDialog(
                         ) {
                             Icon(
                                 Icons.Filled.Delete,
-                                contentDescription = "Delete Player",
+                                contentDescription = stringResource(R.string.cd_delete_player),
                                 tint = MaterialTheme.colorScheme.error,
                             )
                             Text(
-                                "Delete",
+                                stringResource(R.string.btn_delete),
                                 color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.padding(start = 4.dp),
                             )
@@ -199,7 +201,7 @@ fun PlayerDialog(
                         modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                    Text("Save")
+                    Text(stringResource(R.string.btn_save))
                 }
             }
         }
@@ -208,8 +210,8 @@ fun PlayerDialog(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete Player?") },
-            text = { Text("This will permanently remove ${player?.name} and their event history.") },
+            title = { Text(stringResource(R.string.player_dialog_delete_title)) },
+            text = { Text(stringResource(R.string.player_dialog_delete_text, player?.name ?: "")) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -219,10 +221,10 @@ fun PlayerDialog(
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error,
                     ),
-                ) { Text("Delete") }
+                ) { Text(stringResource(R.string.btn_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirm = false }) { Text("Cancel") }
+                TextButton(onClick = { showDeleteConfirm = false }) { Text(stringResource(R.string.btn_cancel)) }
             },
         )
     }

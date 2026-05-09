@@ -1,3 +1,200 @@
 <resources>
-    <string name="app_name">DrinkWatch</string>
+    <string name="app_name" translatable="false">DrinkWatch</string>
+
+    <!-- Bottom navigation tabs -->
+    <string name="tab_session">Session</string>
+    <string name="tab_order">Order</string>
+    <string name="tab_glasses">Glasses</string>
+
+    <!-- Session screen tabs -->
+    <string name="session_tab_overview">Overview</string>
+    <string name="session_tab_players">Players</string>
+    <string name="session_tab_drinks">Drinks</string>
+    <string name="session_tab_glasses">Glasses</string>
+
+    <!-- Common buttons -->
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_return">Return</string>
+    <string name="btn_replace">Replace</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_create">Create</string>
+    <string name="btn_set">Set</string>
+    <string name="btn_select">Select</string>
+    <string name="btn_queue">Queue</string>
+    <string name="btn_confirm_now">Confirm Now</string>
+    <string name="btn_clear_timeout">Clear Timeout</string>
+    <string name="btn_timeout">Timeout</string>
+    <string name="btn_drink">Drink</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_settings">Settings</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_next">Next</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="cd_close_search">Close search</string>
+    <string name="cd_cancel_queued_order">Cancel queued order</string>
+    <string name="cd_return_glass">Return glass</string>
+    <string name="cd_add_player">Add Player</string>
+    <string name="cd_add_drink">Add Drink</string>
+    <string name="cd_edit_player">Edit player</string>
+    <string name="cd_delete_player">Delete Player</string>
+    <string name="cd_delete_drink">Delete Drink</string>
+    <string name="cd_more_actions">More actions</string>
+    <string name="cd_change_glass_number">Change glass number</string>
+    <string name="cd_expand">Expand</string>
+    <string name="cd_collapse">Collapse</string>
+
+    <!-- Search fields -->
+    <string name="search_players_placeholder">Search players\u2026</string>
+    <string name="search_drinks_placeholder">Search drinks\u2026</string>
+
+    <!-- Empty states -->
+    <string name="empty_no_players_yet">No players yet</string>
+    <string name="empty_add_players_hint">Add players in Session → Players.</string>
+    <string name="empty_no_drinks_yet">No drinks yet</string>
+    <string name="empty_all_glasses_returned">All glasses returned</string>
+    <string name="empty_no_history">No history.</string>
+    <string name="empty_no_active_session">No active session</string>
+    <string name="empty_no_drinks_configured">No drinks configured. Add drinks in Session settings.</string>
+    <string name="empty_player_not_available">Player no longer available.</string>
+
+    <!-- Player status -->
+    <string name="player_status_disabled">Disabled</string>
+
+    <!-- Timeout dialog -->
+    <string name="timeout_dialog_title">Set Timeout</string>
+    <string name="timeout_dialog_confirm">Set Timeout</string>
+
+    <!-- Return glass dialog -->
+    <string name="return_glass_dialog_title">Return Glass?</string>
+    <string name="return_glass_dialog_text">Return glass %1$s taken by %2$s?</string>
+
+    <!-- Highlight threshold dialog -->
+    <string name="highlight_dialog_title">Active Drink Highlight</string>
+    <string name="highlight_dialog_threshold_label">Threshold</string>
+    <string name="highlight_dialog_error">Must be ≥ 1</string>
+    <string name="highlight_dialog_supporting">Highlight players with ≥ %1$d active drinks</string>
+
+    <!-- Glass number picker dialog -->
+    <string name="glass_number_dialog_title">Select Glass Number</string>
+
+    <!-- Order dialog -->
+    <string name="order_dialog_step_drink">Select Drink</string>
+    <string name="order_dialog_step_glass">Select Glass</string>
+    <string name="order_dialog_glass_group_label">Glass Group</string>
+    <string name="order_dialog_glass_none">None</string>
+    <string name="order_dialog_glass_number_label">Glass Number</string>
+    <string name="order_dialog_glass_hash">Glass #</string>
+    <string name="order_dialog_glass_taken">Glass %1$d is already taken.</string>
+    <string name="order_dialog_step_progress">Step %1$d / 2</string>
+    <string name="order_dialog_glass_group">Group %1$s</string>
+
+    <!-- Drink types -->
+    <string name="drink_type_shot">Shot</string>
+    <string name="drink_type_long_drink">Long drink</string>
+    <string name="drink_type_non_alcoholic">Non-alcoholic</string>
+    <string name="drink_type_shots_header">Shots</string>
+    <string name="drink_type_long_drinks_header">Long Drinks</string>
+    <string name="drink_type_non_alcoholic_header">Non-Alcoholic</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_gameplay">Gameplay</string>
+    <string name="settings_highlight_title">Active drink highlight</string>
+    <string name="settings_highlight_subtitle">Highlight players with this many or more active drinks</string>
+    <string name="settings_timeout_title">Default timeout</string>
+    <string name="settings_timeout_subtitle">Duration applied when timing out a player</string>
+
+    <!-- Session overview / management -->
+    <string name="session_name_label">Session Name</string>
+    <string name="session_create_new">Create New Session</string>
+    <string name="session_import_from_file">Import From File</string>
+    <string name="session_export_to_file">Export to File</string>
+    <string name="session_start_new">Start New Session</string>
+    <string name="session_create_dialog_label">Session name</string>
+
+    <!-- Replace / new session confirmation dialogs -->
+    <string name="dialog_replace_session_title">Replace Current Session?</string>
+    <string name="dialog_replace_session_text">Importing will permanently replace the current session and all its data.</string>
+    <string name="dialog_new_session_title">Start New Session?</string>
+    <string name="dialog_new_session_text">All current session data will be permanently deleted.</string>
+
+    <!-- Player dialog -->
+    <string name="player_dialog_title_add">Add Player</string>
+    <string name="player_dialog_title_edit">Edit Player • %1$s</string>
+    <string name="player_field_name">Name *</string>
+    <string name="player_field_phone">Phone</string>
+    <string name="player_field_note">Note</string>
+    <string name="player_dialog_delete_title">Delete Player?</string>
+    <string name="player_dialog_delete_text">This will permanently remove %1$s and their event history.</string>
+
+    <!-- Drink dialog -->
+    <string name="drink_dialog_title_add">Add Drink</string>
+    <string name="drink_dialog_title_edit">Edit Drink • %1$s</string>
+    <string name="drink_field_name">Name *</string>
+    <string name="drink_type_label">Type</string>
+    <string name="drink_dialog_delete_title">Delete Drink?</string>
+    <string name="drink_dialog_delete_text">This will permanently remove %1$s.</string>
+
+    <!-- Glass group label -->
+    <string name="glass_group_label">Group %1$s</string>
+
+    <!-- Player detail screen -->
+    <string name="player_detail_title">Player Details</string>
+    <string name="player_info_section">Info</string>
+    <string name="player_stat_active_drinks">Active drinks</string>
+    <string name="player_stat_timeout">Timeout</string>
+    <string name="player_stat_glasses_out">Glasses out</string>
+    <string name="player_stat_total_drinks">Total drinks</string>
+    <string name="player_stat_total_timeout">Total timeout</string>
+
+    <!-- Player history tables -->
+    <string name="player_history_drinks_title">Drinks</string>
+    <string name="player_history_col_time">Time</string>
+    <string name="player_history_col_drink">Drink</string>
+    <string name="player_history_col_glass">Glass</string>
+    <string name="player_history_timeouts_title">Timeouts</string>
+    <string name="player_history_col_duration">Duration</string>
+    <string name="player_history_timeout_cancelled">Cancelled</string>
+    <string name="player_history_glass_out">%1$s (out)</string>
+
+    <!-- Duration picker -->
+    <string name="duration_picker_hours">Hours</string>
+    <string name="duration_picker_minutes">Min</string>
+
+    <!-- Duration format: %1$d = hours, %2$d = minutes -->
+    <string name="duration_format">%1$dh %2$dm</string>
+
+    <!-- Search result empty states -->
+    <string name="no_players_match">No players match \"%1$s\"</string>
+    <string name="no_drinks_match">No drinks match \"%1$s\"</string>
+
+    <!-- Error messages -->
+    <string name="error_glass_taken">That glass is already taken.</string>
+    <string name="error_file_open">Could not open the selected file.</string>
+    <string name="error_export_failed">Export failed.</string>
+    <string name="error_import_invalid">Import failed: invalid or corrupted file.</string>
+    <string name="error_import_failed">Import failed.</string>
+
+    <!-- Order queue -->
+    <string name="order_queue_blocked">Cancel or send the queue first.</string>
+
+    <!-- Language picker -->
+    <string name="settings_theme_label">Theme</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_system">System</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_hungarian">Magyar</string>
+
+    <!-- Plural: queue send button -->
+    <plurals name="queue_send_orders">
+        <item quantity="one">Send %1$d order</item>
+        <item quantity="other">Send %1$d orders</item>
+    </plurals>
 </resources>

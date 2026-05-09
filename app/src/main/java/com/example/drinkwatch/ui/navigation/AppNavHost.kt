@@ -12,6 +12,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
@@ -26,12 +28,19 @@ import com.example.drinkwatch.ui.main.MainScreen
 import com.example.drinkwatch.ui.player.PlayerDetailScreen
 import com.example.drinkwatch.ui.settings.SettingsScreen
 import com.example.drinkwatch.util.findActivity
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun AppNavHost() {
     val activity = LocalContext.current.findActivity()
 
-    val backStack = remember { mutableStateListOf<AppRoute>(Main) }
+    val backStackSaver = listSaver<MutableList<AppRoute>, String>(
+        save    = { list -> list.map { Json.encodeToString<AppRoute>(it) } },
+        restore = { strings -> mutableStateListOf(*strings.map { Json.decodeFromString<AppRoute>(it) }.toTypedArray()) },
+    )
+    val backStack = rememberSaveable(saver = backStackSaver) { mutableStateListOf(Main) }
 
     val popOrFinish: () -> Unit = {
         if (backStack.size <= 1) activity.finish()

@@ -36,6 +36,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 
@@ -62,7 +64,7 @@ fun DurationPicker(
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Hours",
+                text = stringResource(R.string.duration_picker_hours),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(bottom = 4.dp),
             )
@@ -86,7 +88,7 @@ fun DurationPicker(
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Min",
+                text = stringResource(R.string.duration_picker_minutes),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(bottom = 4.dp),
             )

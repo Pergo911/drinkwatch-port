@@ -72,10 +72,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
+import com.example.drinkwatch.R
 import com.example.drinkwatch.data.model.Drink
 import com.example.drinkwatch.data.model.DrinkType
 import com.example.drinkwatch.ui.component.SearchField
@@ -164,7 +166,7 @@ fun OrderDialogContent(
             Column {
                 TopAppBar(
                     title = {
-                        Text(if (step == Step.DRINK) "Select Drink" else "Select Glass")
+                        Text(stringResource(if (step == Step.DRINK) R.string.order_dialog_step_drink else R.string.order_dialog_step_glass))
                     },
                     navigationIcon = {
                         IconButton(onClick = {
@@ -172,7 +174,7 @@ fun OrderDialogContent(
                         }) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
+                                contentDescription = stringResource(R.string.cd_back),
                             )
                         }
                     },
@@ -185,7 +187,7 @@ fun OrderDialogContent(
                                 ) {
                                     Icon(
                                         Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = "Next",
+                                        contentDescription = stringResource(R.string.cd_next),
                                     )
                                 }
                             Step.GLASS ->
@@ -278,9 +280,9 @@ private fun DrinkPickerContent(
 ) {
     if (drinks.isEmpty()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
-            Text("No drinks configured. Add drinks in Session settings.")
+            Text(stringResource(R.string.empty_no_drinks_configured))
+            return
         }
-        return
     }
 
     var searchQuery by remember { mutableStateOf("") }
@@ -297,7 +299,7 @@ private fun DrinkPickerContent(
         SearchField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = "Search drinks…",
+            placeholder = stringResource(R.string.search_drinks_placeholder),
             expanded = isSearchExpanded,
             onExpand = { isSearchExpanded = true },
             onCollapse = { isSearchExpanded = false; searchQuery = "" },
@@ -308,7 +310,7 @@ private fun DrinkPickerContent(
                     IconButton(onClick = { searchQuery = "" }) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
-                            contentDescription = "Clear search",
+                            contentDescription = stringResource(R.string.cd_clear_search),
                         )
                     }
                 }
@@ -326,7 +328,7 @@ private fun DrinkPickerContent(
                         tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     )
                     Text(
-                        text = "No drinks match \"$searchQuery\"",
+                        text = stringResource(R.string.no_drinks_match, searchQuery),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 12.dp),
@@ -358,9 +360,9 @@ private fun DrinkPickerContent(
                             Spacer(Modifier.width(6.dp))
                             Text(
                                 text = when (type) {
-                                    DrinkType.SHOT          -> "Shots"
-                                    DrinkType.LONG_DRINK    -> "Long Drinks"
-                                    DrinkType.NON_ALCOHOLIC -> "Non-Alcoholic"
+                                    DrinkType.SHOT          -> stringResource(R.string.drink_type_shots_header)
+                                    DrinkType.LONG_DRINK    -> stringResource(R.string.drink_type_long_drinks_header)
+                                    DrinkType.NON_ALCOHOLIC -> stringResource(R.string.drink_type_non_alcoholic_header)
                                 },
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.secondary,
@@ -431,24 +433,24 @@ private fun GlassPickerContent(
         modifier = modifier.padding(horizontal = Dimens.DetailHorizontalPadding, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text("Glass Group", style = MaterialTheme.typography.labelMedium)
+        Text(stringResource(R.string.order_dialog_glass_group_label), style = MaterialTheme.typography.labelMedium)
 
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
                 selected = selectedGlassGroup == null,
                 onClick = { onSelectGlassGroup(null) },
-                label = { Text("None") },
+                label = { Text(stringResource(R.string.order_dialog_glass_none)) },
             )
             glassGroupLetters.forEach { letter ->
                 FilterChip(
                     selected = selectedGlassGroup == letter,
                     onClick = { onSelectGlassGroup(letter) },
-                    label = { Text("Group $letter") },
+                    label = { Text(stringResource(R.string.order_dialog_glass_group, letter.toString())) },
                 )
             }
         }
 
-        Text("Glass Number", style = MaterialTheme.typography.labelMedium)
+        Text(stringResource(R.string.order_dialog_glass_number_label), style = MaterialTheme.typography.labelMedium)
 
         Row(
             modifier = Modifier
@@ -462,7 +464,7 @@ private fun GlassPickerContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text("Glass #", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(R.string.order_dialog_glass_hash), style = MaterialTheme.typography.labelMedium)
                 Text(
                     text = if (glassPickerEnabled) selectedGlassNumber.toString() else "–",
                     style = MaterialTheme.typography.titleLarge,
@@ -470,7 +472,7 @@ private fun GlassPickerContent(
             }
             Icon(
                 imageVector = Icons.Filled.Edit,
-                contentDescription = "Change glass number",
+                contentDescription = stringResource(R.string.cd_change_glass_number),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp),
             )
@@ -478,7 +480,7 @@ private fun GlassPickerContent(
 
         if (glassIsAlreadyTaken) {
             Text(
-                text = "Glass $selectedGlassNumber is already taken.",
+                text = stringResource(R.string.order_dialog_glass_taken, selectedGlassNumber),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -510,7 +512,7 @@ private fun StepProgressBar(step: Step, modifier: Modifier = Modifier) {
     )
     Column(modifier = modifier) {
         Text(
-            text = "Step ${if (step == Step.DRINK) 1 else 2} / 2",
+            text = stringResource(R.string.order_dialog_step_progress, if (step == Step.DRINK) 1 else 2),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
@@ -589,7 +591,7 @@ private fun QueueSplitButton(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-            Text("Queue")
+            Text(stringResource(R.string.btn_queue))
         }
         // Wrap trailing button + menu in its own Box so the dropdown anchors below
         // the trailing button, not the entire split button group.
@@ -614,7 +616,7 @@ private fun QueueSplitButton(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         Icons.Filled.ArrowDropDown,
-                        contentDescription = "More actions",
+                        contentDescription = stringResource(R.string.cd_more_actions),
                         modifier = Modifier.size(22.dp).rotate(chevronRotation),
                     )
                 }
@@ -625,7 +627,7 @@ private fun QueueSplitButton(
                 shape = MaterialTheme.shapes.large,
             ) {
                 DropdownMenuItem(
-                    text = { Text("Confirm Now") },
+                    text = { Text(stringResource(R.string.btn_confirm_now)) },
                     onClick = { menuExpanded = false; onConfirmNow() },
                     leadingIcon = { Icon(Icons.Filled.Bolt, contentDescription = null) },
                     enabled = enabled,

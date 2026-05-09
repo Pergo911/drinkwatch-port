@@ -23,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.dialog.ReturnGlassDialog
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.TakenGlassUiState
@@ -46,7 +48,7 @@ fun GlassesTab(
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "All glasses returned",
+                    text = stringResource(R.string.empty_all_glasses_returned),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

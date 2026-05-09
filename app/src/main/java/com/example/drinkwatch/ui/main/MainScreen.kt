@@ -25,9 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.drinkwatch.DrinkWatchApplication
+import com.example.drinkwatch.R
 import com.example.drinkwatch.ui.glasses.GlassesTab
 import com.example.drinkwatch.ui.order.OrderTab
 import com.example.drinkwatch.ui.session.SessionTab
@@ -42,6 +44,7 @@ fun MainScreen(
     onNavigateToOrderDialog: (Long) -> Unit,
 ) {
     val app = LocalContext.current.applicationContext as DrinkWatchApplication
+    val context = LocalContext.current
     val activity = LocalActivity.current as ComponentActivity
     val viewModel: MainViewModel = viewModel(
         viewModelStoreOwner = activity,
@@ -70,12 +73,13 @@ fun MainScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val strGlassTaken = stringResource(R.string.error_glass_taken)
 
     LaunchedEffect(viewModel) {
         viewModel.uiEvents.collect { event ->
             when (event) {
                 is MainViewModel.UiEvent.GlassAlreadyTaken ->
-                    snackbarHostState.showSnackbar("That glass is already taken.")
+                    snackbarHostState.showSnackbar(strGlassTaken)
             }
         }
     }

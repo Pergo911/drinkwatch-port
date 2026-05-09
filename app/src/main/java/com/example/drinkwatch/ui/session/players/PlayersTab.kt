@@ -42,6 +42,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.example.drinkwatch.R
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.drinkwatch.data.model.Player
 import com.example.drinkwatch.ui.component.SearchField
@@ -90,7 +92,7 @@ fun PlayersTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "No players yet",
+                    text = stringResource(R.string.empty_no_players_yet),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -100,7 +102,7 @@ fun PlayersTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                 SearchField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = "Search players…",
+                    placeholder = stringResource(R.string.search_players_placeholder),
                     expanded = isSearchExpanded,
                     onExpand = { isSearchExpanded = true },
                     onCollapse = { isSearchExpanded = false; searchQuery = "" },
@@ -111,12 +113,11 @@ fun PlayersTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     imageVector = Icons.Filled.Clear,
-                                    contentDescription = "Clear search",
+                                    contentDescription = stringResource(R.string.cd_clear_search),
                                 )
                             }
                         }
                     } else null,
-                    modifier = Modifier.fillMaxWidth(),
                 )
                 if (filteredPlayers.isEmpty()) {
                     Column(
@@ -134,7 +135,7 @@ fun PlayersTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                         )
                         Spacer(Modifier.height(12.dp))
                         Text(
-                            text = "No players match \"$searchQuery\"",
+                            text = stringResource(R.string.no_players_match, searchQuery),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -166,7 +167,7 @@ fun PlayersTab(viewModel: SessionViewModel, isActive: Boolean = true) {
                 .align(Alignment.BottomEnd)
                 .padding(28.dp),
         ) {
-            Icon(Icons.Filled.Add, contentDescription = "Add Player")
+            Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.cd_add_player))
         }
     }
 

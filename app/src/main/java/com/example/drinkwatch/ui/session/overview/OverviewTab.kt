@@ -34,11 +34,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.drinkwatch.R
 import com.example.drinkwatch.data.model.Session
 import com.example.drinkwatch.ui.theme.Dimens
 import com.example.drinkwatch.viewmodel.SessionViewModel
+import com.example.drinkwatch.viewmodel.UiText
 
 @Composable
 fun OverviewTab(viewModel: SessionViewModel) {
@@ -56,12 +59,12 @@ fun OverviewTab(viewModel: SessionViewModel) {
             try {
                 val stream = context.contentResolver.openInputStream(uri)
                 if (stream == null) {
-                    viewModel.reportError("Could not open the selected file.")
+                    viewModel.reportError(UiText.Res(R.string.error_file_open))
                 } else {
                     viewModel.importSession(stream)
                 }
             } catch (e: Exception) {
-                viewModel.reportError("Could not open the selected file.")
+                viewModel.reportError(UiText.Res(R.string.error_file_open))
             }
         }
     }
@@ -92,9 +95,9 @@ fun OverviewTab(viewModel: SessionViewModel) {
 
     if (showCreateDialog) {
         NameInputDialog(
-            title = "Create New Session",
-            label = "Session name",
-            confirmText = "Create",
+            title = stringResource(R.string.session_create_new),
+            label = stringResource(R.string.session_create_dialog_label),
+            confirmText = stringResource(R.string.btn_create),
             onConfirm = { name ->
                 viewModel.createSession(name)
                 showCreateDialog = false
@@ -106,16 +109,18 @@ fun OverviewTab(viewModel: SessionViewModel) {
     if (showImportConfirm) {
         AlertDialog(
             onDismissRequest = { showImportConfirm = false },
-            title = { Text("Replace Current Session?") },
-            text = { Text("Importing will permanently replace the current session and all its data.") },
+            title = { Text(stringResource(R.string.dialog_replace_session_title)) },
+            text = { Text(stringResource(R.string.dialog_replace_session_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     showImportConfirm = false
                     importLauncher.launch(arrayOf("application/json"))
-                }) { Text("Replace") }
+                }) { Text(stringResource(R.string.btn_replace)) }
             },
             dismissButton = {
-                TextButton(onClick = { showImportConfirm = false }) { Text("Cancel") }
+                TextButton(onClick = { showImportConfirm = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
             },
         )
     }
@@ -123,16 +128,18 @@ fun OverviewTab(viewModel: SessionViewModel) {
     if (showNewSessionConfirm) {
         AlertDialog(
             onDismissRequest = { showNewSessionConfirm = false },
-            title = { Text("Start New Session?") },
-            text = { Text("All current session data will be permanently deleted.") },
+            title = { Text(stringResource(R.string.dialog_new_session_title)) },
+            text = { Text(stringResource(R.string.dialog_new_session_text)) },
             confirmButton = {
                 TextButton(onClick = {
                     showNewSessionConfirm = false
                     showCreateDialog = true
-                }) { Text("Continue") }
+                }) { Text(stringResource(R.string.btn_continue)) }
             },
             dismissButton = {
-                TextButton(onClick = { showNewSessionConfirm = false }) { Text("Cancel") }
+                TextButton(onClick = { showNewSessionConfirm = false }) {
+                    Text(stringResource(R.string.btn_cancel))
+                }
             },
         )
     }
@@ -158,7 +165,7 @@ private fun NoSessionContent(
         )
         Spacer(Modifier.height(24.dp))
         Text(
-            text = "No active session",
+            text = stringResource(R.string.empty_no_active_session),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -170,7 +177,7 @@ private fun NoSessionContent(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Create New Session")
+            Text(stringResource(R.string.session_create_new))
         }
         Spacer(Modifier.height(12.dp))
         OutlinedButton(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
@@ -180,7 +187,7 @@ private fun NoSessionContent(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Import From File")
+            Text(stringResource(R.string.session_import_from_file))
         }
     }
 }
@@ -204,7 +211,7 @@ private fun SessionLoadedContent(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Session Name") },
+            label = { Text(stringResource(R.string.session_name_label)) },
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,7 +232,7 @@ private fun SessionLoadedContent(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Export to File")
+            Text(stringResource(R.string.session_export_to_file))
         }
         OutlinedButton(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
             Icon(
@@ -234,7 +241,7 @@ private fun SessionLoadedContent(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Import From File")
+            Text(stringResource(R.string.session_import_from_file))
         }
         OutlinedButton(
             onClick = onStartNew,
@@ -249,7 +256,7 @@ private fun SessionLoadedContent(
                 modifier = Modifier.size(ButtonDefaults.IconSize),
             )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Start New Session")
+            Text(stringResource(R.string.session_start_new))
         }
     }
 }
@@ -281,7 +288,7 @@ private fun NameInputDialog(
             ) { Text(confirmText) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) }
         },
     )
 }
