@@ -113,7 +113,7 @@
     <!-- Session overview / management -->
     <string name="session_name_label">Session neve</string>
     <string name="session_create_new">Új session létrehozása</string>
-    <string name="session_import_from_file">Import fájlba</string>
+    <string name="session_import_from_file">Import fájlból</string>
     <string name="session_export_to_file">Export fájlba</string>
     <string name="session_start_new">Új session</string>
     <string name="session_create_dialog_label">Session neve</string>
